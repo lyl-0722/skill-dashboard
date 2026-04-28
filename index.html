@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Skill 库数据看板 · lyl-0722/team-skills-demo</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0d1117; --surface: #161b22; --border: #30363d;
+    --text: #c9d1d9; --muted: #8b949e; --accent: #58a6ff;
+    --green: #3fb950; --orange: #ffa657; --red: #f78166; --purple: #d2a8ff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; font-size: 14px; }
+  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 32px; display: flex; align-items: center; gap: 12px; }
+  header .logo { font-size: 20px; font-weight: 700; color: var(--accent); }
+  header .sub { color: var(--muted); font-size: 13px; }
+  header .gen-time { margin-left: auto; color: var(--muted); font-size: 12px; }
+  .container { max-width: 1280px; margin: 0 auto; padding: 24px 32px; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 16px; margin-bottom: 28px; }
+  .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+  .kpi .label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
+  .kpi .value { font-size: 32px; font-weight: 700; }
+  .kpi .value.blue { color: var(--accent); }
+  .kpi .value.green { color: var(--green); }
+  .kpi .value.orange { color: var(--orange); }
+  .kpi .value.purple { color: var(--purple); }
+  .kpi .value.red { color: var(--red); }
+  .charts-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 16px; margin-bottom: 28px; }
+  .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 28px; }
+  .chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+  .chart-card h3 { font-size: 13px; color: var(--muted); margin-bottom: 16px; text-transform: uppercase; letter-spacing: .5px; }
+  .chart-wrap { position: relative; height: 220px; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th { background: var(--surface); color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .5px; padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); position: sticky; top: 0; }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background .15s; }
+  tbody tr:hover { background: rgba(88,166,255,.05); }
+  td { padding: 10px 14px; vertical-align: middle; }
+  .skill-name { color: var(--accent); font-family: monospace; font-size: 13px; }
+  .tag { background: rgba(88,166,255,.12); color: var(--accent); border-radius: 4px; padding: 2px 8px; font-size: 11px; white-space: nowrap; }
+  .mono { font-family: monospace; color: var(--green); }
+  .bar-wrap { display: inline-block; width: 80px; height: 6px; background: var(--border); border-radius: 3px; vertical-align: middle; margin-right: 6px; }
+  .bar { height: 100%; background: var(--accent); border-radius: 3px; }
+  .calls-num { color: var(--muted); font-size: 12px; }
+  .score { color: var(--orange); letter-spacing: 1px; font-size: 13px; }
+  .table-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .table-card h3 { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+  .table-scroll { max-height: 520px; overflow-y: auto; }
+</style>
+</head>
+<body>
+<header>
+  <span class="logo">⚡ Skill 库数据看板</span>
+  <span class="sub">lyl-0722 / team-skills-demo</span>
+  <span class="gen-time">生成时间：2026-04-28 01:18 UTC (UTC+8 +8h)</span>
+</header>
+<div class="container">
+
+  <!-- KPI Cards -->
+  <div class="kpi-grid">
+    <div class="kpi"><div class="label">Skill 总数</div><div class="value blue">36</div></div>
+    <div class="kpi"><div class="label">累计调用量</div><div class="value green">5</div></div>
+    <div class="kpi"><div class="label">Commits</div><div class="value orange">100+</div></div>
+    <div class="kpi"><div class="label">Contributors</div><div class="value purple">2</div></div>
+    <div class="kpi"><div class="label">仓库体积</div><div class="value red">178 KB</div></div>
+  </div>
+
+  <!-- Charts Row 1 -->
+  <div class="charts-grid">
+    <div class="chart-card">
+      <h3>分类 Skill 数量</h3>
+      <div class="chart-wrap"><canvas id="catChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Commit 活跃度（近30天）</h3>
+      <div class="chart-wrap"><canvas id="commitChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Charts Row 2 -->
+  <div class="charts-row">
+    <div class="chart-card">
+      <h3>调用量 Top Skills</h3>
+      <div class="chart-wrap"><canvas id="topChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>版本分布</h3>
+      <div class="chart-wrap"><canvas id="verChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Skill Table -->
+  <div class="table-card">
+    <h3>Skill 全量清单（36 个）</h3>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Skill 名称</th><th>分类</th><th>版本</th><th>调用量</th><th>评分</th></tr></thead>
+        <tbody>
+    <tr>
+      <td class="skill-name">external-local-product-microsite-from-materials</td>
+      <td><span class="tag">External / Content</span></td>
+      <td class="mono">v1.1.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">external-popular-web-designs</td>
+      <td><span class="tag">External / Content</span></td>
+      <td class="mono">v1.1.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">external-weather-query</td>
+      <td><span class="tag">External / Tools</span></td>
+      <td class="mono">v1.0.1</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">external-ocr-and-documents</td>
+      <td><span class="tag">External / Utility</span></td>
+      <td class="mono">v1.1.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-action-item-tracking</td>
+      <td><span class="tag">00 · Project</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-dingtalk-task-sync</td>
+      <td><span class="tag">00 · Project</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-meeting-minutes</td>
+      <td><span class="tag">00 · Project</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-partnership-follow-up</td>
+      <td><span class="tag">00 · Project</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-project-retrospective</td>
+      <td><span class="tag">00 · Project</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-report-summary-writer</td>
+      <td><span class="tag">00 · Project</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-weekly-report-generator</td>
+      <td><span class="tag">00 · Project</span></td>
+      <td class="mono">v1.2.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-weekly-summary</td>
+      <td><span class="tag">00 · Project</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-wiki-decision-flow</td>
+      <td><span class="tag">00 · Project</span></td>
+      <td class="mono">v1.3.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:20%"></div></div>
+        <span class="calls-num">1</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-weather-query</td>
+      <td><span class="tag">000 · Others</span></td>
+      <td class="mono">v1.0.1</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-company-research</td>
+      <td><span class="tag">01 · Research</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-competitor-analysis</td>
+      <td><span class="tag">01 · Research</span></td>
+      <td class="mono">v1.1.1</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:40%"></div></div>
+        <span class="calls-num">2</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-market-analysis-report</td>
+      <td><span class="tag">01 · Research</span></td>
+      <td class="mono">v1.1.7</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:40%"></div></div>
+        <span class="calls-num">2</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-user-and-scenario-analysis</td>
+      <td><span class="tag">01 · Research</span></td>
+      <td class="mono">v1.1.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-bd-requirement-to-solution</td>
+      <td><span class="tag">02 · Hardware</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-business-opportunity-assessment</td>
+      <td><span class="tag">02 · Hardware</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-hardware-structure-review</td>
+      <td><span class="tag">02 · Hardware</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-prototype-test-checklist</td>
+      <td><span class="tag">02 · Hardware</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-solution-proposal</td>
+      <td><span class="tag">02 · Hardware</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-feature-prioritization</td>
+      <td><span class="tag">03 · Software & AI</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-information-architecture-design</td>
+      <td><span class="tag">03 · Software & AI</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-prd-generation</td>
+      <td><span class="tag">03 · Software & AI</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-requirement-clarification</td>
+      <td><span class="tag">03 · Software & AI</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-demo-script-design</td>
+      <td><span class="tag">04 · UX & Visual</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-design-specification-structuring</td>
+      <td><span class="tag">04 · UX & Visual</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-interaction-flow-design</td>
+      <td><span class="tag">04 · UX & Visual</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-prototype-planning</td>
+      <td><span class="tag">04 · UX & Visual</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-visual-asset-management</td>
+      <td><span class="tag">04 · UX & Visual</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-certification-requirement</td>
+      <td><span class="tag">05 · Compliance</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-charging-protocol-spec</td>
+      <td><span class="tag">05 · Compliance</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-data-security-review</td>
+      <td><span class="tag">05 · Compliance</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-privacy-compliance-check</td>
+      <td><span class="tag">05 · Compliance</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+<script>
+const catCtx = document.getElementById('catChart').getContext('2d');
+new Chart(catCtx, {
+  type: 'doughnut',
+  data: { labels: ["External / Content", "External / Tools", "External / Utility", "00 \u00b7 Project", "000 \u00b7 Others", "01 \u00b7 Research", "02 \u00b7 Hardware", "03 \u00b7 Software & AI", "04 \u00b7 UX & Visual", "05 \u00b7 Compliance"], datasets: [{ data: [2, 1, 1, 9, 1, 4, 5, 4, 5, 4], backgroundColor: ["#58a6ff", "#3fb950", "#f78166", "#d2a8ff", "#ffa657", "#79c0ff", "#56d364", "#ff7b72", "#e3b341", "#a5d6ff"], borderWidth: 0 }] },
+  options: { plugins: { legend: { position: 'right', labels: { color: '#8b949e', font: { size: 11 } } } }, cutout: '60%' }
+});
+
+const commitCtx = document.getElementById('commitChart').getContext('2d');
+new Chart(commitCtx, {
+  type: 'bar',
+  data: {
+    labels: ["03-30", "03-31", "04-01", "04-02", "04-03", "04-04", "04-05", "04-06", "04-07", "04-08", "04-09", "04-10", "04-11", "04-12", "04-13", "04-14", "04-15", "04-16", "04-17", "04-18", "04-19", "04-20", "04-21", "04-22", "04-23", "04-24", "04-25", "04-26", "04-27", "04-28"],
+    datasets: [{ label: 'Commits', data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 13, 0, 0, 86, 0], backgroundColor: 'rgba(88,166,255,0.7)', borderRadius: 3 }]
+  },
+  options: {
+    scales: {
+      x: { ticks: { color: '#8b949e', maxRotation: 45, font: { size: 10 } }, grid: { color: '#21262d' } },
+      y: { ticks: { color: '#8b949e' }, grid: { color: '#21262d' }, beginAtZero: true }
+    },
+    plugins: { legend: { display: false } }
+  }
+});
+
+const topCtx = document.getElementById('topChart').getContext('2d');
+new Chart(topCtx, {
+  type: 'bar',
+  data: {
+    labels: ["competitor-analysis", "market-analysis-report", "wiki-decision-flow", "local-product-microsite-from", "popular-web-designs", "weather-query", "ocr-and-documents", "action-item-tracking", "dingtalk-task-sync", "meeting-minutes"],
+    datasets: [{ label: '调用量', data: [2, 2, 1, 0, 0, 0, 0, 0, 0, 0], backgroundColor: 'rgba(63,185,80,0.7)', borderRadius: 3 }]
+  },
+  options: {
+    indexAxis: 'y',
+    scales: {
+      x: { ticks: { color: '#8b949e' }, grid: { color: '#21262d' }, beginAtZero: true },
+      y: { ticks: { color: '#8b949e', font: { size: 11 } }, grid: { color: '#21262d' } }
+    },
+    plugins: { legend: { display: false } }
+  }
+});
+
+const verCtx = document.getElementById('verChart').getContext('2d');
+new Chart(verCtx, {
+  type: 'pie',
+  data: {
+    labels: ["v1"],
+    datasets: [{ data: [36], backgroundColor: ['#58a6ff','#3fb950','#ffa657','#d2a8ff','#f78166'], borderWidth: 0 }]
+  },
+  options: { plugins: { legend: { position: 'right', labels: { color: '#8b949e', font: { size: 12 } } } } }
+});
+</script>
+</body>
+</html>
