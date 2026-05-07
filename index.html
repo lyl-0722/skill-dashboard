@@ -38,6 +38,8 @@ body{background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,'SF Pro D
 .rank-name-btn{flex:1;font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 8px;background:none;border:none;text-align:left;cursor:pointer;color:var(--text);transition:color .15s}
 .rank-name-btn:hover{color:var(--blue)}
 .rank-name-btn.has-cl{color:var(--blue);text-decoration:underline dotted}
+.rank-gh-link{font-size:12px;color:var(--sub);text-decoration:none;padding:0 4px;flex-shrink:0;transition:color .15s}
+.rank-gh-link:hover{color:var(--blue)}
 .rank-meta{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0}
 .rank-num{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--blue)}
 .rank-num.score{color:var(--orange)}
@@ -136,7 +138,7 @@ tbody td{padding:12px 16px;vertical-align:middle}
 <body>
 <div class="topbar">
   <span class="topbar-title">&#128230; Skill 库数据看板</span>
-  <span class="topbar-time">更新于 2026-05-07 12:16</span>
+  <span class="topbar-time">更新于 2026-05-07 13:35</span>
 </div>
 <div class="page">
 
@@ -164,7 +166,7 @@ tbody td{padding:12px 16px;vertical-align:middle}
   </div>
   <div class="kpi-card">
     <div class="kpi-label">GitHub Commits</div>
-    <div class="kpi-value">311</div>
+    <div class="kpi-value">312</div>
     <div class="kpi-sub">仓库总提交次数</div>
   </div>
   <div class="kpi-card">
@@ -183,7 +185,7 @@ tbody td{padding:12px 16px;vertical-align:middle}
     <div class="rank-col-title">&#11088; 评分 TOP 5</div>
 <div class="rank-row">
       <span class="rank-medal">🥇</span>
-      <button class="rank-name-btn has-cl" data-skill="team-competitor-analysis" title="点击查看 Change Log" onclick="toggleCL(this)">team-competitor-analysis</button>
+      <button class="rank-name-btn has-cl" data-skill="team-competitor-analysis" title="点击查看 Change Log" onclick="toggleCL(this)">team-competitor-analysis</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-competitor-analysis/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a>
       <div class="rank-meta">
         <span class="rank-num">4</span>
         <span class="rank-unit">次调用</span>
@@ -192,7 +194,7 @@ tbody td{padding:12px 16px;vertical-align:middle}
     </div>
 <div class="rank-row">
       <span class="rank-medal">🥇</span>
-      <button class="rank-name-btn has-cl" data-skill="team-user-and-scenario-analysis" title="点击查看 Change Log" onclick="toggleCL(this)">team-user-and-scenario-analysis</button>
+      <button class="rank-name-btn has-cl" data-skill="team-user-and-scenario-analysis" title="点击查看 Change Log" onclick="toggleCL(this)">team-user-and-scenario-analysis</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-user-and-scenario-analysis/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a>
       <div class="rank-meta">
         <span class="rank-num score">5.0</span>
         <span class="rank-unit">均分</span>
@@ -200,7 +202,7 @@ tbody td{padding:12px 16px;vertical-align:middle}
     </div>
 <div class="rank-row">
       <span class="rank-medal">🥈</span>
-      <button class="rank-name-btn has-cl" data-skill="team-market-analysis-report" title="点击查看 Change Log" onclick="toggleCL(this)">team-market-analysis-report</button>
+      <button class="rank-name-btn has-cl" data-skill="team-market-analysis-report" title="点击查看 Change Log" onclick="toggleCL(this)">team-market-analysis-report</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-market-analysis-report/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a>
       <div class="rank-meta">
         <span class="rank-num">2</span>
         <span class="rank-unit">次调用</span>
@@ -209,7 +211,7 @@ tbody td{padding:12px 16px;vertical-align:middle}
     </div>
 <div class="rank-row">
       <span class="rank-medal">🥈</span>
-      <button class="rank-name-btn has-cl" data-skill="team-market-analysis-report" title="点击查看 Change Log" onclick="toggleCL(this)">team-market-analysis-report</button>
+      <button class="rank-name-btn has-cl" data-skill="team-market-analysis-report" title="点击查看 Change Log" onclick="toggleCL(this)">team-market-analysis-report</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-market-analysis-report/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a>
       <div class="rank-meta">
         <span class="rank-num score">4.5</span>
         <span class="rank-unit">均分</span>
@@ -217,7 +219,7 @@ tbody td{padding:12px 16px;vertical-align:middle}
     </div>
 <div class="rank-row">
       <span class="rank-medal">🥉</span>
-      <button class="rank-name-btn has-cl" data-skill="team-wiki-decision-flow" title="点击查看 Change Log" onclick="toggleCL(this)">team-wiki-decision-flow</button>
+      <button class="rank-name-btn has-cl" data-skill="team-wiki-decision-flow" title="点击查看 Change Log" onclick="toggleCL(this)">team-wiki-decision-flow</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/project/team-wiki-decision-flow/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a>
       <div class="rank-meta">
         <span class="rank-num">1</span>
         <span class="rank-unit">次调用</span>
@@ -226,7 +228,7 @@ tbody td{padding:12px 16px;vertical-align:middle}
     </div>
 <div class="rank-row">
       <span class="rank-medal">🥉</span>
-      <button class="rank-name-btn has-cl" data-skill="team-competitor-analysis" title="点击查看 Change Log" onclick="toggleCL(this)">team-competitor-analysis</button>
+      <button class="rank-name-btn has-cl" data-skill="team-competitor-analysis" title="点击查看 Change Log" onclick="toggleCL(this)">team-competitor-analysis</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-competitor-analysis/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a>
       <div class="rank-meta">
         <span class="rank-num score">4.3</span>
         <span class="rank-unit">均分</span>
@@ -234,7 +236,7 @@ tbody td{padding:12px 16px;vertical-align:middle}
     </div>
 <div class="rank-row">
       <span class="rank-medal">④</span>
-      <button class="rank-name-btn " data-skill="team-project-retrospective" onclick="toggleCL(this)">team-project-retrospective</button>
+      <button class="rank-name-btn " data-skill="team-project-retrospective" onclick="toggleCL(this)">team-project-retrospective</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/project/team-project-retrospective/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a>
       <div class="rank-meta">
         <span class="rank-num">0</span>
         <span class="rank-unit">次调用</span>
@@ -244,7 +246,7 @@ tbody td{padding:12px 16px;vertical-align:middle}
 <div class="rank-row"></div>
 <div class="rank-row">
       <span class="rank-medal">⑤</span>
-      <button class="rank-name-btn " data-skill="team-3c-ecom-detail-generator" onclick="toggleCL(this)">team-3c-ecom-detail-generator</button>
+      <button class="rank-name-btn " data-skill="team-3c-ecom-detail-generator" onclick="toggleCL(this)">team-3c-ecom-detail-generator</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/design/team-3c-ecom-detail-generator/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a>
       <div class="rank-meta">
         <span class="rank-num">0</span>
         <span class="rank-unit">次调用</span>
@@ -267,7 +269,7 @@ tbody td{padding:12px 16px;vertical-align:middle}
   <div class="rank-card-title">&#128196; 生成文档数 TOP 5</div>
   <div class="rank-row">
     <span class="rank-medal">🥇</span>
-    <span class="rank-name-btn" style="cursor:default">team-user-and-scenario-analysis</span>
+    <span class="rank-name-btn" style="cursor:default">team-user-and-scenario-analysis</span><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-user-and-scenario-analysis/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a>
     <div class="rank-meta">
       <span class="rank-num" style="color:var(--green)">1</span>
       <span class="rank-unit">篇文档</span>
@@ -275,7 +277,7 @@ tbody td{padding:12px 16px;vertical-align:middle}
     </div>
   </div>  <div class="rank-row">
     <span class="rank-medal">🥈</span>
-    <span class="rank-name-btn" style="cursor:default">team-market-analysis-report</span>
+    <span class="rank-name-btn" style="cursor:default">team-market-analysis-report</span><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-market-analysis-report/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a>
     <div class="rank-meta">
       <span class="rank-num" style="color:var(--green)">1</span>
       <span class="rank-unit">篇文档</span>
@@ -283,7 +285,7 @@ tbody td{padding:12px 16px;vertical-align:middle}
     </div>
   </div>  <div class="rank-row">
     <span class="rank-medal">🥉</span>
-    <span class="rank-name-btn" style="cursor:default">team-competitor-analysis</span>
+    <span class="rank-name-btn" style="cursor:default">team-competitor-analysis</span><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-competitor-analysis/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a>
     <div class="rank-meta">
       <span class="rank-num" style="color:var(--green)">1</span>
       <span class="rank-unit">篇文档</span>
@@ -787,7 +789,7 @@ tbody td{padding:12px 16px;vertical-align:middle}
 function openLink(url) { if(url) window.open(url, '_blank'); }
 
 // Change Log 数据
-const CL_DATA = {"team-competitor-analysis": [{"version": "v1.1.3", "change": "新增 Pitfalls：①文档标题更新须用 dws doc rename（dws doc update 不更新标题），Windows shell 中文引号截断须用 Python subprocess 参数列表传参；②溯源块之后禁止再写重复正文标题行", "calls": "调用量: 4", "score": "评分: 4.2", "owner": "责任人: 吕应龙", "date": "改动时间: 2026-05-06"}, {"version": "v1.1.2", "change": "新增 Pitfalls：钉钉文档不支持 blockquote 内嵌多行列表，文档溯源块须用普通加粗段落格式", "calls": "调用量: 3", "score": "评分: 4.3", "owner": "责任人: 吕应龙", "date": "改动时间: 2026-05-06"}, {"version": "v1.1.1", "change": "新增「结论先行」为 Output 与 Recommended Sections 的必须首项，确保决策者快速获取全局洞察", "calls": "调用量: 2", "score": "评分: 4.5", "owner": "责任人: 吕应龙", "date": "改动时间: 2026-04-24"}, {"version": "v1.1.0", "change": "强化核心功能与交互方式的优先级；增加视觉化输出强制要求；确立通用性原则，移除硬编码竞品列表", "calls": "调用量: 0", "score": "评分: 0.0", "owner": "责任人: AI产品中心-吕应龙", "date": "改动时间:"}, {"version": "v1.0.0", "change": "补全竞品分析的比较口径、竞品分层、输出结构与常见误区", "calls": "调用量: 0", "score": "评分: 0.0", "owner": "责任人: AI产品中心-吕应龙", "date": "改动时间:"}], "team-market-analysis-report": [{"version": "v1.2.0", "change": "新增 Pre-step（调用 team-dingtalk-wiki-controller 按标签读取钉钉知识库上下文）和 Post-step（溯源 Header 注入 → 重复检测 → 归档写入钉钉知识库），Workflow 步骤编号相应调整；Pitfalls 新增 Pre/Post-step 不可跳过约束；Quality Checks 新增 Post-step 执行检查项", "calls": "调用量: 2", "score": "评分: 4.5", "owner": "责任人: 吕应龙", "date": "改动时间: 2026-04-28"}, {"version": "v1.1.7", "change": "新增满意度确认流程（报告交付后必须先询问用户是否满意，确认满意后方可触发任务回顾卡）；Pitfalls 新增禁止直接弹出任务回顾卡的约束", "calls": "调用量: 2", "score": "评分: 4.5", "owner": "责任人: 吕应龙", "date": "改动时间: 2026-04-24"}, {"version": "v1.1.6", "change": "新增信息来源角标规范（双向可跳转）", "calls": "调用量: 2", "score": "评分: 4.5", "owner": "责任人: 吕应龙", "date": "改动时间: 2026-04-24"}, {"version": "v1.1.5", "change": "新增 PDF 导出模块说明。，改动时间：", "calls": "调用量: 0", "score": "评分: 0.0", "owner": "责任人: AI产品中心-吕应龙", "date": "改动时间: 2026-04-23"}, {"version": "v1.1.4", "change": "新增\"报告精简偏好\"配置。，改动时间：-", "calls": "调用量: 0", "score": "评分: 0.0", "owner": "责任人: AI产品中心-丛泽龙", "date": "改动时间:"}, {"version": "v1.1.3", "change": "新增中文内部汇报默认使用\"主要结论\"标题等规则。，改动时间：-", "calls": "调用量: 0", "score": "评分: 0.0", "owner": "责任人: AI产品中心-吕应龙", "date": "改动时间:"}, {"version": "v1.1.2", "change": "补充来源校验、价格口径校验等。，改动时间：-", "calls": "调用量: 0", "score": "评分: 0.0", "owner": "责任人: AI产品中心-吕应龙", "date": "改动时间:"}, {"version": "v1.1.1", "change": "新增中国市场硬件类价格检查项。，改动时间：-", "calls": "调用量: 0", "score": "评分: 0.0", "owner": "责任人: AI产品中心-吕应龙", "date": "改动时间:"}, {"version": "v1.1.0", "change": "增强中国市场优先规则等。，改动时间：-", "calls": "调用量: 0", "score": "评分: 0.0", "owner": "责任人: AI产品中心-吕应龙", "date": "改动时间:"}, {"version": "v1.0.0", "change": "初始版本。，改动时间：-", "calls": "调用量: 0", "score": "评分: 0.0", "owner": "责任人: AI产品中心-吕应龙", "date": "改动时间:"}], "team-wiki-decision-flow": [{"version": "v1.3.0", "change": "", "calls": "新增触发权限白名单（吕应龙完全授权/丛泽龙提交授权）；Step 4 改为按板块负责人分组推送钉钉卡片，每张卡片仅含该负责人负责板块的影响内容；丛泽龙提交的决策卡片标题增加提交人说明，确认权归吕应龙", "score": "", "owner": "评分: -", "date": ""}, {"version": "v1.2.0", "change": "", "calls": "重构四个场景：①场景A改名new_decision，新增钉钉交互卡片确认逻辑（按钮触发，非口头确认）；②场景B补充每日同步简报钉钉推送；③场景C明确按负责人分组推送；④新增场景D doc_query（双触发条件：查阅特定文档/查询自己负责的待办），含待办展示与Skill调用引导", "score": "", "owner": "评分: -", "date": ""}, {"version": "v1.1.0", "change": "", "calls": "补充场景B智能同步逻辑（冲击性/补充性改动判断）、场景C明确cron触发时机与注册机制", "score": "", "owner": "评分: -", "date": ""}, {"version": "v1.0.0", "change": "", "calls": "初始版本，定义决策穿透响应全流程（manual_change / daily_summary / todo_reminder 三场景）", "score": "", "owner": "评分: -", "date": ""}], "team-user-and-scenario-analysis": [{"version": "v1.1.0", "change": "吕应龙): iDock 智能桌面机器人人群与场景分析", "calls": "调用量: 1", "score": "评分: 5.0", "owner": "责任人: 未知", "date": "改动时间: 2026-05-06"}, {"version": "v1.1.0", "change": "吕应龙): 增加报告交付质量标准，要求正文核心论点必须包含 `[N]` 格式的权威数据角标", "calls": "调用量: 0", "score": "评分: 0.0", "owner": "责任人: URL", "date": "改动时间: 2026-04-22"}, {"version": "v1.0.0", "change": "补全用户与场景分析的角色拆解、场景框架、输出结构与质量检查", "calls": "调用量: 0", "score": "评分: 0.0", "owner": "责任人: AI产品中心-吕应龙", "date": "改动时间:"}]};
+const CL_DATA = {"team-competitor-analysis": [{"version": "v1.1.3", "change": "新增 Pitfalls：①文档标题更新须用 dws doc rename（dws doc update 不更新标题），Windows shell 中文引号截断须用 Python subprocess 参数列表传参；②溯源块之后禁止再写重复正文标题行", "calls": "调用量: 4", "score": "评分: 4.2", "owner": "责任人: 吕应龙", "date": "改动时间: 2026-05-06"}, {"version": "v1.1.2", "change": "新增 Pitfalls：钉钉文档不支持 blockquote 内嵌多行列表，文档溯源块须用普通加粗段落格式", "calls": "调用量: 3", "score": "评分: 4.3", "owner": "责任人: 吕应龙", "date": "改动时间: 2026-05-06"}, {"version": "v1.1.1", "change": "新增「结论先行」为 Output 与 Recommended Sections 的必须首项，确保决策者快速获取全局洞察", "calls": "调用量: 2", "score": "评分: 4.5", "owner": "责任人: 吕应龙", "date": "改动时间: 2026-04-24"}, {"version": "v1.1.0", "change": "强化核心功能与交互方式的优先级；增加视觉化输出强制要求；确立通用性原则，移除硬编码竞品列表", "calls": "调用量: 0", "score": "评分: 0.0", "owner": "责任人: AI产品中心-吕应龙", "date": "改动时间:"}, {"version": "v1.0.0", "change": "补全竞品分析的比较口径、竞品分层、输出结构与常见误区", "calls": "调用量: 0", "score": "评分: 0.0", "owner": "责任人: AI产品中心-吕应龙", "date": "改动时间:"}], "team-market-analysis-report": [{"version": "v1.2.0", "change": "新增 Pre-step（调用 team-dingtalk-wiki-controller 按标签读取钉钉知识库上下文）和 Post-step（溯源 Header 注入 → 重复检测 → 归档写入钉钉知识库），Workflow 步骤编号相应调整；Pitfalls 新增 Pre/Post-step 不可跳过约束；Quality Checks 新增 Post-step 执行检查项", "calls": "调用量: 2", "score": "评分: 4.5", "owner": "责任人: 吕应龙", "date": "改动时间: 2026-04-28"}, {"version": "v1.1.7", "change": "新增满意度确认流程（报告交付后必须先询问用户是否满意，确认满意后方可触发任务回顾卡）；Pitfalls 新增禁止直接弹出任务回顾卡的约束", "calls": "调用量: 2", "score": "评分: 4.5", "owner": "责任人: 吕应龙", "date": "改动时间: 2026-04-24"}, {"version": "v1.1.6", "change": "新增信息来源角标规范（双向可跳转）", "calls": "调用量: 2", "score": "评分: 4.5", "owner": "责任人: 吕应龙", "date": "改动时间: 2026-04-24"}, {"version": "v1.1.5", "change": "新增 PDF 导出模块说明。，改动时间：", "calls": "调用量: 0", "score": "评分: 0.0", "owner": "责任人: AI产品中心-吕应龙", "date": "改动时间: 2026-04-23"}, {"version": "v1.1.4", "change": "新增\"报告精简偏好\"配置。，改动时间：-", "calls": "调用量: 0", "score": "评分: 0.0", "owner": "责任人: AI产品中心-丛泽龙", "date": "改动时间:"}, {"version": "v1.1.3", "change": "新增中文内部汇报默认使用\"主要结论\"标题等规则。，改动时间：-", "calls": "调用量: 0", "score": "评分: 0.0", "owner": "责任人: AI产品中心-吕应龙", "date": "改动时间:"}, {"version": "v1.1.2", "change": "补充来源校验、价格口径校验等。，改动时间：-", "calls": "调用量: 0", "score": "评分: 0.0", "owner": "责任人: AI产品中心-吕应龙", "date": "改动时间:"}, {"version": "v1.1.1", "change": "新增中国市场硬件类价格检查项。，改动时间：-", "calls": "调用量: 0", "score": "评分: 0.0", "owner": "责任人: AI产品中心-吕应龙", "date": "改动时间:"}, {"version": "v1.1.0", "change": "增强中国市场优先规则等。，改动时间：-", "calls": "调用量: 0", "score": "评分: 0.0", "owner": "责任人: AI产品中心-吕应龙", "date": "改动时间:"}, {"version": "v1.0.0", "change": "初始版本。，改动时间：-", "calls": "调用量: 0", "score": "评分: 0.0", "owner": "责任人: AI产品中心-吕应龙", "date": "改动时间:"}], "team-wiki-decision-flow": [{"version": "v1.3.0", "change": "", "calls": "新增触发权限白名单（吕应龙完全授权/丛泽龙提交授权）；Step 4 改为按板块负责人分组推送钉钉卡片，每张卡片仅含该负责人负责板块的影响内容；丛泽龙提交的决策卡片标题增加提交人说明，确认权归吕应龙", "score": "", "owner": "评分: -", "date": ""}, {"version": "v1.2.0", "change": "", "calls": "重构四个场景：①场景A改名new_decision，新增钉钉交互卡片确认逻辑（按钮触发，非口头确认）；②场景B补充每日同步简报钉钉推送；③场景C明确按负责人分组推送；④新增场景D doc_query（双触发条件：查阅特定文档/查询自己负责的待办），含待办展示与Skill调用引导", "score": "", "owner": "评分: -", "date": ""}, {"version": "v1.1.0", "change": "", "calls": "补充场景B智能同步逻辑（冲击性/补充性改动判断）、场景C明确cron触发时机与注册机制", "score": "", "owner": "评分: -", "date": ""}, {"version": "v1.0.0", "change": "", "calls": "初始版本，定义决策穿透响应全流程（manual_change / daily_summary / todo_reminder 三场景）", "score": "", "owner": "评分: -", "date": ""}], "team-user-and-scenario-analysis": [{"version": "v1.0.0", "change": "补全用户与场景分析的角色拆解、场景框架、输出结构与质量检查", "calls": "调用量: 0", "score": "评分: 0.0", "owner": "责任人: AI产品中心-吕应龙", "date": "改动时间: 2026-04-22"}, {"version": "v1.1.0", "change": "增加报告交付质量标准，要求正文核心论点必须包含 [N] 格式的权威数据角标", "calls": "调用量: 0", "score": "评分: 0.0", "owner": "责任人: AI产品中心-吕应龙", "date": "改动时间: 2026-04-22"}, {"version": "v1.1.1", "change": "调用生成 iDock 智能桌面机器人人群与场景分析报告", "calls": "调用量: 2", "score": "评分: 4.5", "owner": "责任人: AI产品中心-吕应龙", "date": "改动时间: 2026-05-06"}]};
 
 function toggleCL(btn) {
   const panel = document.getElementById('clPanel');
