@@ -142,7 +142,7 @@ tbody td{padding:12px 16px;vertical-align:middle}
 <body>
 <div class="topbar">
   <span class="topbar-title">&#128230; Skill 库数据看板</span>
-  <span class="topbar-time">更新于 2026-05-07 14:00</span>
+  <span class="topbar-time">更新于 2026-05-07 14:04</span>
 </div>
 <div class="page">
 
@@ -874,7 +874,7 @@ function toggleCLDocs(btn) {
   if (panel.classList.contains('open') && document.getElementById('clPanelDocsName').textContent === skill) {
     closeCLDocs(); return;
   }
-  const entries = clData[skill] || [];
+  const entries = CL_DATA[skill] || [];
   document.getElementById('clPanelDocsName').textContent = skill;
   let body = '';
   if (!entries.length) {
