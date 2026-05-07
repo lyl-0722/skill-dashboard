@@ -35,10 +35,12 @@ body{background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,'SF Pro D
 .rank-row{display:flex;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);min-height:56px}
 .rank-row:last-child{border-bottom:none}
 .rank-medal{font-size:18px;width:28px;flex-shrink:0;text-align:center}
-.rank-name-btn{flex:1;font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 0 0 8px;background:none;border:none;text-align:left;cursor:pointer;color:var(--text);transition:color .15s}
+.rank-name-wrap{flex:1;display:flex;align-items:center;overflow:hidden;padding-left:8px;min-width:0}
+.rank-name-btn{flex:0 1 auto;font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0;background:none;border:none;text-align:left;cursor:pointer;color:var(--sub);transition:color .15s;min-width:0}
 .rank-name-btn:hover{color:var(--blue)}
-.rank-name-btn.has-cl{color:var(--blue);text-decoration:underline dotted}
-.rank-gh-link{font-size:12px;color:var(--sub);text-decoration:none;padding:0 2px 0 0;flex-shrink:0;transition:color .15s}
+.rank-name-btn.has-cl{color:var(--sub);text-decoration:underline dotted}
+.rank-name-btn.has-cl:hover{color:var(--blue)}
+.rank-gh-link{flex:0 0 auto;font-size:12px;color:var(--sub);text-decoration:none;padding:0 0 0 2px;transition:color .15s}
 .rank-gh-link:hover{color:var(--blue)}
 .rank-meta{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0}
 .rank-num{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--blue)}
@@ -138,7 +140,7 @@ tbody td{padding:12px 16px;vertical-align:middle}
 <body>
 <div class="topbar">
   <span class="topbar-title">&#128230; Skill 库数据看板</span>
-  <span class="topbar-time">更新于 2026-05-07 13:40</span>
+  <span class="topbar-time">更新于 2026-05-07 13:49</span>
 </div>
 <div class="page">
 
@@ -185,7 +187,7 @@ tbody td{padding:12px 16px;vertical-align:middle}
     <div class="rank-col-title">&#11088; 评分 TOP 5</div>
 <div class="rank-row">
       <span class="rank-medal">🥇</span>
-      <button class="rank-name-btn has-cl" data-skill="team-competitor-analysis" title="点击查看 Change Log" onclick="toggleCL(this)">team-competitor-analysis</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-competitor-analysis/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a>
+      <div class="rank-name-wrap"><button class="rank-name-btn has-cl" data-skill="team-competitor-analysis" title="点击查看 Change Log" onclick="toggleCL(this)">team-competitor-analysis</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-competitor-analysis/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a></div>
       <div class="rank-meta">
         <span class="rank-num">4</span>
         <span class="rank-unit">次调用</span>
@@ -194,7 +196,7 @@ tbody td{padding:12px 16px;vertical-align:middle}
     </div>
 <div class="rank-row">
       <span class="rank-medal">🥇</span>
-      <button class="rank-name-btn has-cl" data-skill="team-user-and-scenario-analysis" title="点击查看 Change Log" onclick="toggleCL(this)">team-user-and-scenario-analysis</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-user-and-scenario-analysis/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a>
+      <div class="rank-name-wrap"><button class="rank-name-btn has-cl" data-skill="team-user-and-scenario-analysis" title="点击查看 Change Log" onclick="toggleCL(this)">team-user-and-scenario-analysis</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-user-and-scenario-analysis/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a></div>
       <div class="rank-meta">
         <span class="rank-num score">5.0</span>
         <span class="rank-unit">均分</span>
@@ -202,7 +204,7 @@ tbody td{padding:12px 16px;vertical-align:middle}
     </div>
 <div class="rank-row">
       <span class="rank-medal">🥈</span>
-      <button class="rank-name-btn has-cl" data-skill="team-market-analysis-report" title="点击查看 Change Log" onclick="toggleCL(this)">team-market-analysis-report</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-market-analysis-report/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a>
+      <div class="rank-name-wrap"><button class="rank-name-btn has-cl" data-skill="team-market-analysis-report" title="点击查看 Change Log" onclick="toggleCL(this)">team-market-analysis-report</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-market-analysis-report/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a></div>
       <div class="rank-meta">
         <span class="rank-num">2</span>
         <span class="rank-unit">次调用</span>
@@ -211,7 +213,7 @@ tbody td{padding:12px 16px;vertical-align:middle}
     </div>
 <div class="rank-row">
       <span class="rank-medal">🥈</span>
-      <button class="rank-name-btn has-cl" data-skill="team-market-analysis-report" title="点击查看 Change Log" onclick="toggleCL(this)">team-market-analysis-report</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-market-analysis-report/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a>
+      <div class="rank-name-wrap"><button class="rank-name-btn has-cl" data-skill="team-market-analysis-report" title="点击查看 Change Log" onclick="toggleCL(this)">team-market-analysis-report</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-market-analysis-report/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a></div>
       <div class="rank-meta">
         <span class="rank-num score">4.5</span>
         <span class="rank-unit">均分</span>
@@ -219,7 +221,7 @@ tbody td{padding:12px 16px;vertical-align:middle}
     </div>
 <div class="rank-row">
       <span class="rank-medal">🥉</span>
-      <button class="rank-name-btn has-cl" data-skill="team-wiki-decision-flow" title="点击查看 Change Log" onclick="toggleCL(this)">team-wiki-decision-flow</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/project/team-wiki-decision-flow/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a>
+      <div class="rank-name-wrap"><button class="rank-name-btn has-cl" data-skill="team-wiki-decision-flow" title="点击查看 Change Log" onclick="toggleCL(this)">team-wiki-decision-flow</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/project/team-wiki-decision-flow/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a></div>
       <div class="rank-meta">
         <span class="rank-num">1</span>
         <span class="rank-unit">次调用</span>
@@ -228,7 +230,7 @@ tbody td{padding:12px 16px;vertical-align:middle}
     </div>
 <div class="rank-row">
       <span class="rank-medal">🥉</span>
-      <button class="rank-name-btn has-cl" data-skill="team-competitor-analysis" title="点击查看 Change Log" onclick="toggleCL(this)">team-competitor-analysis</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-competitor-analysis/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a>
+      <div class="rank-name-wrap"><button class="rank-name-btn has-cl" data-skill="team-competitor-analysis" title="点击查看 Change Log" onclick="toggleCL(this)">team-competitor-analysis</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-competitor-analysis/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a></div>
       <div class="rank-meta">
         <span class="rank-num score">4.3</span>
         <span class="rank-unit">均分</span>
@@ -236,7 +238,7 @@ tbody td{padding:12px 16px;vertical-align:middle}
     </div>
 <div class="rank-row">
       <span class="rank-medal">④</span>
-      <button class="rank-name-btn " data-skill="team-project-retrospective" onclick="toggleCL(this)">team-project-retrospective</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/project/team-project-retrospective/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a>
+      <div class="rank-name-wrap"><button class="rank-name-btn " data-skill="team-project-retrospective" onclick="toggleCL(this)">team-project-retrospective</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/project/team-project-retrospective/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a></div>
       <div class="rank-meta">
         <span class="rank-num">0</span>
         <span class="rank-unit">次调用</span>
@@ -246,7 +248,7 @@ tbody td{padding:12px 16px;vertical-align:middle}
 <div class="rank-row"></div>
 <div class="rank-row">
       <span class="rank-medal">⑤</span>
-      <button class="rank-name-btn " data-skill="team-3c-ecom-detail-generator" onclick="toggleCL(this)">team-3c-ecom-detail-generator</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/design/team-3c-ecom-detail-generator/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a>
+      <div class="rank-name-wrap"><button class="rank-name-btn " data-skill="team-3c-ecom-detail-generator" onclick="toggleCL(this)">team-3c-ecom-detail-generator</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/design/team-3c-ecom-detail-generator/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a></div>
       <div class="rank-meta">
         <span class="rank-num">0</span>
         <span class="rank-unit">次调用</span>
@@ -269,7 +271,7 @@ tbody td{padding:12px 16px;vertical-align:middle}
   <div class="rank-card-title">&#128196; 生成文档数 TOP 5</div>
   <div class="rank-row">
     <span class="rank-medal">🥇</span>
-    <span class="rank-name-btn" style="cursor:default">team-user-and-scenario-analysis</span><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-user-and-scenario-analysis/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a>
+    <div class="rank-name-wrap"><span class="rank-name-btn" style="cursor:default;color:var(--sub)">team-user-and-scenario-analysis</span><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-user-and-scenario-analysis/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a></div>
     <div class="rank-meta">
       <span class="rank-num" style="color:var(--green)">1</span>
       <span class="rank-unit">篇文档</span>
@@ -277,7 +279,7 @@ tbody td{padding:12px 16px;vertical-align:middle}
     </div>
   </div>  <div class="rank-row">
     <span class="rank-medal">🥈</span>
-    <span class="rank-name-btn" style="cursor:default">team-market-analysis-report</span><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-market-analysis-report/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a>
+    <div class="rank-name-wrap"><span class="rank-name-btn" style="cursor:default;color:var(--sub)">team-market-analysis-report</span><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-market-analysis-report/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a></div>
     <div class="rank-meta">
       <span class="rank-num" style="color:var(--green)">1</span>
       <span class="rank-unit">篇文档</span>
@@ -285,7 +287,7 @@ tbody td{padding:12px 16px;vertical-align:middle}
     </div>
   </div>  <div class="rank-row">
     <span class="rank-medal">🥉</span>
-    <span class="rank-name-btn" style="cursor:default">team-competitor-analysis</span><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-competitor-analysis/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a>
+    <div class="rank-name-wrap"><span class="rank-name-btn" style="cursor:default;color:var(--sub)">team-competitor-analysis</span><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-competitor-analysis/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a></div>
     <div class="rank-meta">
       <span class="rank-num" style="color:var(--green)">1</span>
       <span class="rank-unit">篇文档</span>
