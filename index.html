@@ -142,7 +142,7 @@ tbody td{padding:12px 16px;vertical-align:middle}
 <body>
 <div class="topbar">
   <span class="topbar-title">&#128230; Skill 库数据看板</span>
-  <span class="topbar-time">更新于 2026-05-07 13:57</span>
+  <span class="topbar-time">更新于 2026-05-07 14:00</span>
 </div>
 <div class="page">
 
@@ -298,7 +298,7 @@ tbody td{padding:12px 16px;vertical-align:middle}
   <div class="rank-row">
     <span class="rank-medal">🥇</span>
     <div class="rank-name-wrap">
-      <div class="rank-name-row"><button class="rank-name-btn has-cl" data-skill="team-user-and-scenario-analysis" title="点击查看 Change Log" onclick="toggleCL(this)">team-user-and-scenario-analysis</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-user-and-scenario-analysis/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a></div>
+      <div class="rank-name-row"><button class="rank-name-btn has-cl" data-skill="team-user-and-scenario-analysis" title="点击查看 Change Log" onclick="toggleCLDocs(this)">team-user-and-scenario-analysis</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-user-and-scenario-analysis/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a></div>
       <span class="rank-creator">创建人：吕应龙</span>
     </div>
     <div class="rank-meta">
@@ -309,7 +309,7 @@ tbody td{padding:12px 16px;vertical-align:middle}
   </div>  <div class="rank-row">
     <span class="rank-medal">🥈</span>
     <div class="rank-name-wrap">
-      <div class="rank-name-row"><button class="rank-name-btn has-cl" data-skill="team-market-analysis-report" title="点击查看 Change Log" onclick="toggleCL(this)">team-market-analysis-report</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-market-analysis-report/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a></div>
+      <div class="rank-name-row"><button class="rank-name-btn has-cl" data-skill="team-market-analysis-report" title="点击查看 Change Log" onclick="toggleCLDocs(this)">team-market-analysis-report</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-market-analysis-report/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a></div>
       <span class="rank-creator">创建人：吕应龙</span>
     </div>
     <div class="rank-meta">
@@ -320,7 +320,7 @@ tbody td{padding:12px 16px;vertical-align:middle}
   </div>  <div class="rank-row">
     <span class="rank-medal">🥉</span>
     <div class="rank-name-wrap">
-      <div class="rank-name-row"><button class="rank-name-btn has-cl" data-skill="team-competitor-analysis" title="点击查看 Change Log" onclick="toggleCL(this)">team-competitor-analysis</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-competitor-analysis/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a></div>
+      <div class="rank-name-row"><button class="rank-name-btn has-cl" data-skill="team-competitor-analysis" title="点击查看 Change Log" onclick="toggleCLDocs(this)">team-competitor-analysis</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-competitor-analysis/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a></div>
       <span class="rank-creator">创建人：吕应龙</span>
     </div>
     <div class="rank-meta">
@@ -328,7 +328,16 @@ tbody td{padding:12px 16px;vertical-align:middle}
       <span class="rank-unit">篇文档</span>
       <div class="bar-wrap"><div class="bar-fill" style="width:100%"></div></div>
     </div>
-  </div></div>
+  </div>
+  <!-- Change Log 展开面板（文档数TOP5专属） -->
+  <div id="clPanelDocs" class="cl-panel">
+    <div class="cl-panel-header">
+      <span class="cl-panel-name" id="clPanelDocsName"></span>
+      <button class="cl-close" onclick="closeCLDocs()">✕</button>
+    </div>
+    <div id="clPanelDocsBody"></div>
+  </div>
+</div>
 
 <div class="section-title">人员贡献</div>
 <div class="people-grid">
@@ -856,6 +865,38 @@ function toggleCL(btn) {
 
 function closeCL() {
   document.getElementById('clPanel').classList.remove('open');
+}
+
+// Change Log 面板 — 文档数 TOP5 专属（展示在该卡片下方）
+function toggleCLDocs(btn) {
+  const panel = document.getElementById('clPanelDocs');
+  const skill = btn.dataset.skill;
+  if (panel.classList.contains('open') && document.getElementById('clPanelDocsName').textContent === skill) {
+    closeCLDocs(); return;
+  }
+  const entries = clData[skill] || [];
+  document.getElementById('clPanelDocsName').textContent = skill;
+  let body = '';
+  if (!entries.length) {
+    body = '<p class="cl-empty">暂无 Change Log 记录</p>';
+  } else {
+    body = '<table class="cl-table"><thead><tr><th>版本</th><th>改动</th><th>调用量</th><th>评分</th><th>责任人</th><th>时间</th></tr></thead><tbody>';
+    entries.forEach(e => {
+      body += `<tr><td class="cl-ver">${e.version}</td><td class="cl-change">${e.change}</td><td class="cl-calls">${e.calls}</td><td class="cl-score">${e.score}</td><td class="cl-owner">${e.owner}</td><td class="cl-date">${e.date}</td></tr>`;
+    });
+    body += '</tbody></table>';
+  }
+  document.getElementById('clPanelDocsBody').innerHTML = body;
+  // 把面板移到文档数TOP5卡片（rank-card）内部末尾
+  const docsCard = document.getElementById('clPanelDocs').closest('.rank-card') ||
+                   btn.closest('.rank-card');
+  if (docsCard) docsCard.appendChild(panel);
+  panel.classList.add('open');
+  panel.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function closeCLDocs() {
+  document.getElementById('clPanelDocs').classList.remove('open');
 }
 
 // 完整清单排序
