@@ -3,981 +3,515 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Skill 库数据看板</title>
+<title>Skill 库数据看板 · lyl-0722/team-skills-demo</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#F5F5F7;--card:#FFFFFF;--blue:#007AFF;--blue-light:#E8F1FF;
-  --text:#1D1D1F;--sub:#6E6E73;--border:#E5E5EA;
-  --green:#34C759;--orange:#FF9500;--red:#FF3B30;
-  --radius:18px;--shadow:0 2px 20px rgba(0,0,0,.06);
-}
-body{background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','PingFang SC',sans-serif;color:var(--text);min-height:100vh}
-.topbar{position:sticky;top:0;z-index:100;background:rgba(245,245,247,.85);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--border);padding:0 32px;height:52px;display:flex;align-items:center;justify-content:space-between}
-.topbar-title{font-size:15px;font-weight:600;letter-spacing:-.2px}
-.topbar-time{font-size:12px;color:var(--sub)}
-.page{max-width:1100px;margin:0 auto;padding:32px 24px 64px}
-.section-title{font-size:22px;font-weight:700;letter-spacing:-.5px;margin:40px 0 16px}
-.section-title:first-child{margin-top:0}
-
-/* KPI */
-.kpi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
-.kpi-card{background:var(--card);border-radius:var(--radius);padding:20px 18px;box-shadow:var(--shadow)}
-.kpi-label{font-size:12px;color:var(--sub);margin-bottom:8px;font-weight:500}
-.kpi-value{font-size:32px;font-weight:700;letter-spacing:-1px;font-variant-numeric:tabular-nums;line-height:1}
-.kpi-value.blue{color:var(--blue)}
-.kpi-sub{font-size:11px;color:var(--sub);margin-top:6px}
-
-/* 排行榜：统一大卡片，左右两栏对齐 */
-.rank-outer{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px 24px}
-.rank-inner{display:grid;grid-template-columns:1fr 1fr;gap:0 32px}
-.rank-col-title{font-size:14px;font-weight:600;color:var(--sub);padding-bottom:12px;border-bottom:1px solid var(--border);margin-bottom:4px}
-.rank-row{display:flex;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);min-height:56px}
-.rank-row:last-child{border-bottom:none}
-.rank-medal{font-size:18px;width:28px;flex-shrink:0;text-align:center}
-.rank-name-wrap{flex:1;display:flex;flex-direction:column;align-items:flex-start;overflow:hidden;padding-left:8px;min-width:0;gap:2px}
-.rank-name-row{display:flex;align-items:center;min-width:0}
-.rank-creator{font-size:11px;color:var(--sub);opacity:.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
-.rank-name-btn{flex:0 1 auto;font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0;background:none;border:none;text-align:left;cursor:pointer;color:var(--sub);transition:color .15s;min-width:0}
-.rank-name-btn:hover{color:var(--blue)}
-.rank-name-btn.has-cl{color:var(--sub);text-decoration:underline dotted}
-.rank-name-btn.has-cl:hover{color:var(--blue)}
-.rank-gh-link{flex:0 0 auto;font-size:12px;color:var(--sub);text-decoration:none;padding:0 0 0 2px;transition:color .15s}
-.rank-gh-link:hover{color:var(--blue)}
-.rank-meta{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0}
-.rank-num{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--blue)}
-.rank-num.score{color:var(--orange)}
-.rank-unit{font-size:11px;color:var(--sub)}
-.bar-wrap{width:72px;height:4px;background:#F0F0F3;border-radius:2px;margin-top:4px}
-.bar-fill{height:4px;background:var(--blue);border-radius:2px}
-
-/* Change Log 展开面板 */
-.cl-panel{display:none;grid-column:1/-1;background:#F8F8FA;border-radius:12px;padding:16px;margin:4px 0 8px;border:1px solid var(--border)}
-.cl-panel.open{display:block}
-.cl-panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.cl-panel-name{font-size:14px;font-weight:600}
-.cl-close{background:none;border:none;font-size:18px;cursor:pointer;color:var(--sub);line-height:1;padding:2px 6px;border-radius:6px}
-.cl-close:hover{background:var(--border)}
-.cl-table{width:100%;border-collapse:collapse;font-size:12px}
-.cl-table thead th{background:#EFEFEF;padding:7px 10px;text-align:left;font-weight:600;color:var(--sub);font-size:11px;border-bottom:1px solid var(--border)}
-.cl-table tbody tr{border-bottom:1px solid var(--border)}
-.cl-table tbody tr:last-child{border-bottom:none}
-.cl-table tbody td{padding:7px 10px;vertical-align:top}
-.cl-ver{font-weight:700;color:var(--blue);white-space:nowrap}
-.cl-change{max-width:260px}
-.cl-score{color:var(--orange);font-weight:600}
-.cl-empty{font-size:13px;color:var(--sub);padding:8px 0}
-
-/* 三列排行（文档数） */
-.rank-triple{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:0}
-.rank-card{background:var(--card);border-radius:var(--radius);padding:22px 22px 14px;box-shadow:var(--shadow)}
-.rank-card-title{font-size:14px;font-weight:600;color:var(--sub);margin-bottom:16px}
-.rank-card .rank-row{min-height:auto}
-
-/* 人员贡献 */
-.people-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
-.person-card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
-.person-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
-.avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:#fff;flex-shrink:0}
-.person-name{font-size:16px;font-weight:600}
-.stat-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)}
-.stat-row:last-child{border-bottom:none}
-.stat-label{font-size:12px;color:var(--sub)}
-.stat-val{font-size:14px;font-weight:600;font-variant-numeric:tabular-nums}
-.na{color:var(--sub);font-weight:400}
-.score-val{color:var(--orange);font-weight:700}
-
-/* 完整 Skill 清单 */
-.table-wrap{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
-table{width:100%;border-collapse:collapse;font-size:13px}
-thead th{background:#FAFAFA;padding:12px 16px;text-align:left;font-size:11px;font-weight:600;color:var(--sub);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);cursor:pointer;white-space:nowrap;user-select:none}
-thead th:hover{color:var(--blue)}
-tbody tr{border-bottom:1px solid var(--border)}
-tbody tr:last-child{border-bottom:none}
-tbody tr:hover{background:#FAFAFA}
-tbody td{padding:12px 16px;vertical-align:middle}
-.tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:500;background:var(--blue-light);color:var(--blue)}
-.ver-badge{display:inline-block;padding:2px 7px;border-radius:5px;font-size:11px;background:#F0F0F3;color:var(--sub)}
-.calls-num{font-weight:700;color:var(--blue);font-variant-numeric:tabular-nums}
-.doc-count-num{font-weight:600;color:var(--green)}
-.doc-count-link{font-weight:700;color:var(--blue);text-decoration:none;font-size:13px;transition:opacity .15s}
-.doc-count-link:hover{opacity:.7}
-.doc-count-btn{font-weight:700;color:var(--blue);font-size:13px;background:none;border:none;cursor:pointer;padding:0;transition:opacity .15s}
-.doc-count-btn:hover{opacity:.7}
-/* 多文档浮层 */
-.doc-popup{position:fixed;z-index:999;background:#fff;border-radius:14px;box-shadow:0 8px 40px rgba(0,0,0,.18);padding:16px 18px;min-width:280px;max-width:400px;display:none}
-.doc-popup.open{display:block}
-.doc-popup-title{font-size:13px;font-weight:600;color:var(--sub);margin-bottom:10px}
-.doc-popup-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;text-decoration:none;color:var(--text);font-size:13px;transition:background .12s}
-.doc-popup-item:hover{background:var(--blue-light);color:var(--blue)}
-.doc-popup-close{position:absolute;top:10px;right:14px;background:none;border:none;font-size:18px;cursor:pointer;color:var(--sub);line-height:1}
-
-/* 产出文档 */
-.doc-list{display:flex;flex-direction:column;gap:6px;margin-top:12px}
-.doc-item{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#F5F5F7;border-radius:10px;text-decoration:none;color:var(--text);transition:background .15s;position:relative}
-.doc-item:hover{background:#E8F1FF}
-.doc-item-arrow{margin-left:auto;font-size:12px;color:var(--blue);opacity:.6;flex-shrink:0}
-.doc-icon{font-size:16px;flex-shrink:0}
-.doc-title{font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.doc-card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
-.doc-card-header{display:flex;align-items:center;gap:10px;margin-bottom:4px}
-.doc-skill-name{font-size:15px;font-weight:600}
-.doc-cat-tag{font-size:11px;padding:2px 8px;border-radius:6px;background:var(--blue-light);color:var(--blue);font-weight:500}
-.doc-creator{font-size:12px;color:var(--sub);margin-bottom:10px}
-.docs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
-
-@media(max-width:900px){
-  .kpi-grid{grid-template-columns:repeat(3,1fr)}
-  .rank-inner{grid-template-columns:1fr}
-  .rank-triple{grid-template-columns:1fr}
-  .people-grid{grid-template-columns:1fr 1fr}
-  .docs-grid{grid-template-columns:1fr}
-}
-@media(max-width:600px){
-  .kpi-grid{grid-template-columns:repeat(2,1fr)}
-  .people-grid{grid-template-columns:1fr}
-}
+  :root {
+    --bg: #0d1117; --surface: #161b22; --border: #30363d;
+    --text: #c9d1d9; --muted: #8b949e; --accent: #58a6ff;
+    --green: #3fb950; --orange: #ffa657; --red: #f78166; --purple: #d2a8ff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; font-size: 14px; }
+  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 32px; display: flex; align-items: center; gap: 12px; }
+  header .logo { font-size: 20px; font-weight: 700; color: var(--accent); }
+  header .sub { color: var(--muted); font-size: 13px; }
+  header .gen-time { margin-left: auto; color: var(--muted); font-size: 12px; }
+  .container { max-width: 1280px; margin: 0 auto; padding: 24px 32px; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 16px; margin-bottom: 28px; }
+  .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+  .kpi .label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
+  .kpi .value { font-size: 32px; font-weight: 700; }
+  .kpi .value.blue { color: var(--accent); }
+  .kpi .value.green { color: var(--green); }
+  .kpi .value.orange { color: var(--orange); }
+  .kpi .value.purple { color: var(--purple); }
+  .kpi .value.red { color: var(--red); }
+  .charts-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 16px; margin-bottom: 28px; }
+  .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 28px; }
+  .chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+  .chart-card h3 { font-size: 13px; color: var(--muted); margin-bottom: 16px; text-transform: uppercase; letter-spacing: .5px; }
+  .chart-wrap { position: relative; height: 220px; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th { background: var(--surface); color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .5px; padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); position: sticky; top: 0; }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background .15s; }
+  tbody tr:hover { background: rgba(88,166,255,.05); }
+  td { padding: 10px 14px; vertical-align: middle; }
+  .skill-name { color: var(--accent); font-family: monospace; font-size: 13px; }
+  .tag { background: rgba(88,166,255,.12); color: var(--accent); border-radius: 4px; padding: 2px 8px; font-size: 11px; white-space: nowrap; }
+  .mono { font-family: monospace; color: var(--green); }
+  .bar-wrap { display: inline-block; width: 80px; height: 6px; background: var(--border); border-radius: 3px; vertical-align: middle; margin-right: 6px; }
+  .bar { height: 100%; background: var(--accent); border-radius: 3px; }
+  .calls-num { color: var(--muted); font-size: 12px; }
+  .score { color: var(--orange); letter-spacing: 1px; font-size: 13px; }
+  .table-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .table-card h3 { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+  .table-scroll { max-height: 520px; overflow-y: auto; }
 </style>
 </head>
 <body>
-<div class="topbar">
-  <span class="topbar-title">&#128230; Skill 库数据看板</span>
-  <span class="topbar-time">更新于 2026-05-09 17:50</span>
+<header>
+  <span class="logo">⚡ Skill 库数据看板</span>
+  <span class="sub">lyl-0722 / team-skills-demo</span>
+  <span class="gen-time">生成时间：2026-04-28 02:18 UTC (UTC+8 +8h)</span>
+</header>
+<div class="container">
+
+  <!-- KPI Cards -->
+  <div class="kpi-grid">
+    <div class="kpi"><div class="label">Skill 总数</div><div class="value blue">36</div></div>
+    <div class="kpi"><div class="label">累计调用量</div><div class="value green">5</div></div>
+    <div class="kpi"><div class="label">Commits</div><div class="value orange">100+</div></div>
+    <div class="kpi"><div class="label">Contributors</div><div class="value purple">2</div></div>
+    <div class="kpi"><div class="label">仓库体积</div><div class="value red">178 KB</div></div>
+  </div>
+
+  <!-- Charts Row 1 -->
+  <div class="charts-grid">
+    <div class="chart-card">
+      <h3>分类 Skill 数量</h3>
+      <div class="chart-wrap"><canvas id="catChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Commit 活跃度（近30天）</h3>
+      <div class="chart-wrap"><canvas id="commitChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Charts Row 2 -->
+  <div class="charts-row">
+    <div class="chart-card">
+      <h3>调用量 Top Skills</h3>
+      <div class="chart-wrap"><canvas id="topChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>版本分布</h3>
+      <div class="chart-wrap"><canvas id="verChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Skill Table -->
+  <div class="table-card">
+    <h3>Skill 全量清单（36 个）</h3>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Skill 名称</th><th>分类</th><th>版本</th><th>调用量</th><th>评分</th></tr></thead>
+        <tbody>
+    <tr>
+      <td class="skill-name">external-local-product-microsite-from-materials</td>
+      <td><span class="tag">External / Content</span></td>
+      <td class="mono">v1.1.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">external-popular-web-designs</td>
+      <td><span class="tag">External / Content</span></td>
+      <td class="mono">v1.1.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">external-weather-query</td>
+      <td><span class="tag">External / Tools</span></td>
+      <td class="mono">v1.0.1</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">external-ocr-and-documents</td>
+      <td><span class="tag">External / Utility</span></td>
+      <td class="mono">v1.1.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-action-item-tracking</td>
+      <td><span class="tag">00 · Project</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-dingtalk-task-sync</td>
+      <td><span class="tag">00 · Project</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-meeting-minutes</td>
+      <td><span class="tag">00 · Project</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-partnership-follow-up</td>
+      <td><span class="tag">00 · Project</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-project-retrospective</td>
+      <td><span class="tag">00 · Project</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-report-summary-writer</td>
+      <td><span class="tag">00 · Project</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-weekly-report-generator</td>
+      <td><span class="tag">00 · Project</span></td>
+      <td class="mono">v1.2.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-weekly-summary</td>
+      <td><span class="tag">00 · Project</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-wiki-decision-flow</td>
+      <td><span class="tag">00 · Project</span></td>
+      <td class="mono">v1.3.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:20%"></div></div>
+        <span class="calls-num">1</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-weather-query</td>
+      <td><span class="tag">000 · Others</span></td>
+      <td class="mono">v1.0.1</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-company-research</td>
+      <td><span class="tag">01 · Research</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-competitor-analysis</td>
+      <td><span class="tag">01 · Research</span></td>
+      <td class="mono">v1.1.1</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:40%"></div></div>
+        <span class="calls-num">2</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-market-analysis-report</td>
+      <td><span class="tag">01 · Research</span></td>
+      <td class="mono">v1.1.7</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:40%"></div></div>
+        <span class="calls-num">2</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-user-and-scenario-analysis</td>
+      <td><span class="tag">01 · Research</span></td>
+      <td class="mono">v1.1.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-bd-requirement-to-solution</td>
+      <td><span class="tag">02 · Hardware</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-business-opportunity-assessment</td>
+      <td><span class="tag">02 · Hardware</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-hardware-structure-review</td>
+      <td><span class="tag">02 · Hardware</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-prototype-test-checklist</td>
+      <td><span class="tag">02 · Hardware</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-solution-proposal</td>
+      <td><span class="tag">02 · Hardware</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-feature-prioritization</td>
+      <td><span class="tag">03 · Software & AI</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-information-architecture-design</td>
+      <td><span class="tag">03 · Software & AI</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-prd-generation</td>
+      <td><span class="tag">03 · Software & AI</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-requirement-clarification</td>
+      <td><span class="tag">03 · Software & AI</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-demo-script-design</td>
+      <td><span class="tag">04 · UX & Visual</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-design-specification-structuring</td>
+      <td><span class="tag">04 · UX & Visual</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-interaction-flow-design</td>
+      <td><span class="tag">04 · UX & Visual</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-prototype-planning</td>
+      <td><span class="tag">04 · UX & Visual</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-visual-asset-management</td>
+      <td><span class="tag">04 · UX & Visual</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-certification-requirement</td>
+      <td><span class="tag">05 · Compliance</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-charging-protocol-spec</td>
+      <td><span class="tag">05 · Compliance</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-data-security-review</td>
+      <td><span class="tag">05 · Compliance</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr>
+    <tr>
+      <td class="skill-name">team-privacy-compliance-check</td>
+      <td><span class="tag">05 · Compliance</span></td>
+      <td class="mono">v1.0.0</td>
+      <td>
+        <div class="bar-wrap"><div class="bar" style="width:2%"></div></div>
+        <span class="calls-num">0</span>
+      </td>
+      <td class="score">—</td>
+    </tr></tbody>
+      </table>
+    </div>
+  </div>
+
 </div>
-<div class="page">
-
-<div class="section-title">整体概况</div>
-<div class="kpi-grid">
-  <div class="kpi-card">
-    <div class="kpi-label">Skill 总数</div>
-    <div class="kpi-value blue">42</div>
-    <div class="kpi-sub">已建立调用记录表</div>
-  </div>
-  <div class="kpi-card">
-    <div class="kpi-label">累计调用量</div>
-    <div class="kpi-value">8</div>
-    <div class="kpi-sub">全部 Skill 合计</div>
-  </div>
-  <div class="kpi-card">
-    <div class="kpi-label">生成文档数</div>
-    <div class="kpi-value" style="color:var(--green)">3</div>
-    <div class="kpi-sub">Skill 产出文档合计</div>
-  </div>
-  <div class="kpi-card">
-    <div class="kpi-label">有评分 Skill</div>
-    <div class="kpi-value">3</div>
-    <div class="kpi-sub">平均分 4.57</div>
-  </div>
-  <div class="kpi-card">
-    <div class="kpi-label">GitHub Commits</div>
-    <div class="kpi-value">342</div>
-    <div class="kpi-sub">仓库总提交次数</div>
-  </div>
-  <div class="kpi-card">
-    <div class="kpi-label">贡献成员</div>
-    <div class="kpi-value">2</div>
-    <div class="kpi-sub">创建过 Skill 的成员</div>
-  </div>
-</div>
-
-<div class="section-title">Skill 排行榜</div>
-
-<!-- 调用量 & 评分 双列对齐 -->
-<div class="rank-outer" style="margin-bottom:16px">
-  <div class="rank-inner">
-    <div class="rank-col-title">&#128293; 调用量 TOP 5</div>
-    <div class="rank-col-title">&#11088; 评分 TOP 5</div>
-<div class="rank-row">
-      <span class="rank-medal">🥇</span>
-      <div class="rank-name-wrap">
-        <div class="rank-name-row"><button class="rank-name-btn has-cl" data-skill="team-competitor-analysis" title="点击查看 Change Log" onclick="toggleCL(this)">team-competitor-analysis</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-competitor-analysis/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a></div>
-        <span class="rank-creator">创建人：吕应龙</span>
-      </div>
-      <div class="rank-meta">
-        <span class="rank-num">5</span>
-        <span class="rank-unit">次调用</span>
-        <div class="bar-wrap"><div class="bar-fill" style="width:100%"></div></div>
-      </div>
-    </div>
-<div class="rank-row">
-      <span class="rank-medal">🥇</span>
-      <div class="rank-name-wrap">
-        <div class="rank-name-row"><button class="rank-name-btn has-cl" data-skill="team-user-and-scenario-analysis" title="点击查看 Change Log" onclick="toggleCL(this)">team-user-and-scenario-analysis</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-user-and-scenario-analysis/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a></div>
-        <span class="rank-creator">创建人：吕应龙</span>
-      </div>
-      <div class="rank-meta">
-        <span class="rank-num score">5.0</span>
-        <span class="rank-unit">均分</span>
-      </div>
-    </div>
-<div class="rank-row">
-      <span class="rank-medal">🥈</span>
-      <div class="rank-name-wrap">
-        <div class="rank-name-row"><button class="rank-name-btn has-cl" data-skill="team-market-analysis-report" title="点击查看 Change Log" onclick="toggleCL(this)">team-market-analysis-report</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-market-analysis-report/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a></div>
-        <span class="rank-creator">创建人：吕应龙</span>
-      </div>
-      <div class="rank-meta">
-        <span class="rank-num">2</span>
-        <span class="rank-unit">次调用</span>
-        <div class="bar-wrap"><div class="bar-fill" style="width:40%"></div></div>
-      </div>
-    </div>
-<div class="rank-row">
-      <span class="rank-medal">🥈</span>
-      <div class="rank-name-wrap">
-        <div class="rank-name-row"><button class="rank-name-btn has-cl" data-skill="team-market-analysis-report" title="点击查看 Change Log" onclick="toggleCL(this)">team-market-analysis-report</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-market-analysis-report/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a></div>
-        <span class="rank-creator">创建人：吕应龙</span>
-      </div>
-      <div class="rank-meta">
-        <span class="rank-num score">4.5</span>
-        <span class="rank-unit">均分</span>
-      </div>
-    </div>
-<div class="rank-row">
-      <span class="rank-medal">🥉</span>
-      <div class="rank-name-wrap">
-        <div class="rank-name-row"><button class="rank-name-btn has-cl" data-skill="team-wiki-decision-flow" title="点击查看 Change Log" onclick="toggleCL(this)">team-wiki-decision-flow</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/project/team-wiki-decision-flow/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a></div>
-        <span class="rank-creator">创建人：吕应龙</span>
-      </div>
-      <div class="rank-meta">
-        <span class="rank-num">1</span>
-        <span class="rank-unit">次调用</span>
-        <div class="bar-wrap"><div class="bar-fill" style="width:20%"></div></div>
-      </div>
-    </div>
-<div class="rank-row">
-      <span class="rank-medal">🥉</span>
-      <div class="rank-name-wrap">
-        <div class="rank-name-row"><button class="rank-name-btn has-cl" data-skill="team-competitor-analysis" title="点击查看 Change Log" onclick="toggleCL(this)">team-competitor-analysis</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-competitor-analysis/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a></div>
-        <span class="rank-creator">创建人：吕应龙</span>
-      </div>
-      <div class="rank-meta">
-        <span class="rank-num score">4.2</span>
-        <span class="rank-unit">均分</span>
-      </div>
-    </div>
-<div class="rank-row">
-      <span class="rank-medal">④</span>
-      <div class="rank-name-wrap">
-        <div class="rank-name-row"><button class="rank-name-btn has-cl" data-skill="team-project-retrospective" title="点击查看 Change Log" onclick="toggleCL(this)">team-project-retrospective</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/project/team-project-retrospective/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a></div>
-        <span class="rank-creator">创建人：吕应龙</span>
-      </div>
-      <div class="rank-meta">
-        <span class="rank-num">0</span>
-        <span class="rank-unit">次调用</span>
-        <div class="bar-wrap"><div class="bar-fill" style="width:0%"></div></div>
-      </div>
-    </div>
-<div class="rank-row"></div>
-<div class="rank-row">
-      <span class="rank-medal">⑤</span>
-      <div class="rank-name-wrap">
-        <div class="rank-name-row"><button class="rank-name-btn has-cl" data-skill="team-3c-ecom-detail-generator" title="点击查看 Change Log" onclick="toggleCL(this)">team-3c-ecom-detail-generator</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/design/team-3c-ecom-detail-generator/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a></div>
-        <span class="rank-creator">创建人：吕应龙</span>
-      </div>
-      <div class="rank-meta">
-        <span class="rank-num">0</span>
-        <span class="rank-unit">次调用</span>
-        <div class="bar-wrap"><div class="bar-fill" style="width:0%"></div></div>
-      </div>
-    </div>
-<div class="rank-row"></div>
-  </div><!-- /rank-inner -->
-
-  <!-- Change Log 展开面板（共享，插入大卡片内） -->
-  <div id="clPanel" class="cl-panel">
-    <div class="cl-panel-header">
-      <span class="cl-panel-name" id="clPanelName"></span>
-      <button class="cl-close" onclick="closeCL()">✕</button>
-    </div>
-    <div id="clPanelBody"></div>
-  </div>
-</div><!-- /rank-outer -->
-<div class="rank-card" style="margin-bottom:0">
-  <div class="rank-card-title">&#128196; 生成文档数 TOP 5</div>
-  <div class="rank-row">
-    <span class="rank-medal">🥇</span>
-    <div class="rank-name-wrap">
-      <div class="rank-name-row"><button class="rank-name-btn has-cl" data-skill="team-user-and-scenario-analysis" title="点击查看 Change Log" onclick="toggleCLDocs(this)">team-user-and-scenario-analysis</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-user-and-scenario-analysis/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a></div>
-      <span class="rank-creator">创建人：吕应龙</span>
-    </div>
-    <div class="rank-meta">
-      <span class="rank-num" style="color:var(--green)">1</span>
-      <span class="rank-unit">篇文档</span>
-      <div class="bar-wrap"><div class="bar-fill" style="width:100%"></div></div>
-    </div>
-  </div>  <div class="rank-row">
-    <span class="rank-medal">🥈</span>
-    <div class="rank-name-wrap">
-      <div class="rank-name-row"><button class="rank-name-btn has-cl" data-skill="team-market-analysis-report" title="点击查看 Change Log" onclick="toggleCLDocs(this)">team-market-analysis-report</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-market-analysis-report/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a></div>
-      <span class="rank-creator">创建人：吕应龙</span>
-    </div>
-    <div class="rank-meta">
-      <span class="rank-num" style="color:var(--green)">1</span>
-      <span class="rank-unit">篇文档</span>
-      <div class="bar-wrap"><div class="bar-fill" style="width:100%"></div></div>
-    </div>
-  </div>  <div class="rank-row">
-    <span class="rank-medal">🥉</span>
-    <div class="rank-name-wrap">
-      <div class="rank-name-row"><button class="rank-name-btn has-cl" data-skill="team-competitor-analysis" title="点击查看 Change Log" onclick="toggleCLDocs(this)">team-competitor-analysis</button><a class="rank-gh-link" href="https://github.com/lyl-0722/team-skills-demo/blob/main/team-skill/research/team-competitor-analysis/SKILL.md" target="_blank" title="查看 SKILL.md">↗</a></div>
-      <span class="rank-creator">创建人：吕应龙</span>
-    </div>
-    <div class="rank-meta">
-      <span class="rank-num" style="color:var(--green)">1</span>
-      <span class="rank-unit">篇文档</span>
-      <div class="bar-wrap"><div class="bar-fill" style="width:100%"></div></div>
-    </div>
-  </div>
-  <!-- Change Log 展开面板（文档数TOP5专属） -->
-  <div id="clPanelDocs" class="cl-panel">
-    <div class="cl-panel-header">
-      <span class="cl-panel-name" id="clPanelDocsName"></span>
-      <button class="cl-close" onclick="closeCLDocs()">✕</button>
-    </div>
-    <div id="clPanelDocsBody"></div>
-  </div>
-</div>
-
-<div class="section-title">&#128293; 团队 Skill 积极度排名</div>
-<div class="rank-outer">
-<div style="font-size:12px;color:var(--sub);margin-bottom:14px">每次完成 Skill 任务并评分即 +1，反映成员主动使用 Skill 的积极程度</div>
-  <div class="rank-row">
-    <span class="rank-medal">🥇</span>
-    <div class="rank-name-wrap">
-      <div class="rank-name-row"><span class="rank-name-btn">吕应龙</span></div>
-      <span class="rank-creator">最近评分：—</span>
-    </div>
-    <div class="rank-meta">
-      <span class="rank-num" style="color:var(--red)">0</span>
-      <span class="rank-unit">次</span>
-      <div class="bar-wrap"><div class="bar-fill" style="width:0%;background:var(--red)"></div></div>
-    </div>
-  </div>
-  <div class="rank-row">
-    <span class="rank-medal">🥈</span>
-    <div class="rank-name-wrap">
-      <div class="rank-name-row"><span class="rank-name-btn">丛泽龙</span></div>
-      <span class="rank-creator">最近评分：—</span>
-    </div>
-    <div class="rank-meta">
-      <span class="rank-num" style="color:var(--red)">0</span>
-      <span class="rank-unit">次</span>
-      <div class="bar-wrap"><div class="bar-fill" style="width:0%;background:var(--red)"></div></div>
-    </div>
-  </div>
-</div>
-
-<div class="section-title">人员贡献</div>
-<div class="people-grid">
-  <div class="person-card">
-    <div class="person-header">
-      <div class="avatar" style="background:#007AFF">龙</div>
-      <div>
-        <div class="person-name">吕应龙</div>
-        <div class="stat-label">AI产品中心</div>
-      </div>
-    </div>
-    <div class="stat-row"><span class="stat-label">创建 Skill 数</span><span class="stat-val">37</span></div>
-    <div class="stat-row"><span class="stat-label">创建 Skill 累计调用</span><span class="stat-val calls-num">8</span></div>
-    <div class="stat-row"><span class="stat-label">创建 Skill 均分</span><span class="stat-val"><span class="score-val">4.3</span></span></div>
-    <div class="stat-row"><span class="stat-label">产出文档数</span><span class="stat-val doc-count-num">3</span></div>
-  </div>
-  <div class="person-card">
-    <div class="person-header">
-      <div class="avatar" style="background:#34C759">龙</div>
-      <div>
-        <div class="person-name">丛泽龙</div>
-        <div class="stat-label">AI产品中心</div>
-      </div>
-    </div>
-    <div class="stat-row"><span class="stat-label">创建 Skill 数</span><span class="stat-val">5</span></div>
-    <div class="stat-row"><span class="stat-label">创建 Skill 累计调用</span><span class="stat-val calls-num">0</span></div>
-    <div class="stat-row"><span class="stat-label">创建 Skill 均分</span><span class="stat-val"><span class="na">—</span></span></div>
-    <div class="stat-row"><span class="stat-label">产出文档数</span><span class="stat-val doc-count-num">0</span></div>
-  </div>
-</div>
-
-<div class="section-title">&#128196; 产出文档</div>
-<div class="docs-grid">
-  <div class="doc-card">
-    <div class="doc-card-header">
-      <span class="doc-skill-name">team-competitor-analysis</span>
-      <span class="doc-cat-tag">research</span>
-    </div>
-    <div class="doc-creator">创建人：吕应龙</div>
-    <div class="doc-list">
-<a class="doc-item" href="javascript:void(0)" onclick="openLink('https://alidocs.dingtalk.com/i/nodes/mExel2BLV54yYaZRimk034ewWgk9rpMq')"><span class="doc-icon">&#128196;</span><span class="doc-title">[研究] iDock智能桌面机器人·竞品分析_v5.1</span><span class="doc-item-arrow">↗</span></a>
-    </div>
-  </div>
-  <div class="doc-card">
-    <div class="doc-card-header">
-      <span class="doc-skill-name">team-market-analysis-report</span>
-      <span class="doc-cat-tag">research</span>
-    </div>
-    <div class="doc-creator">创建人：吕应龙</div>
-    <div class="doc-list">
-<a class="doc-item" href="javascript:void(0)" onclick="openLink('https://alidocs.dingtalk.com/i/nodes/vy20BglGWOeM9ro7t0R60GgnJA7depqY')"><span class="doc-icon">&#128196;</span><span class="doc-title">[研究] iDock AI桌面助手市场分析报告_v1.0</span><span class="doc-item-arrow">↗</span></a>
-    </div>
-  </div>
-  <div class="doc-card">
-    <div class="doc-card-header">
-      <span class="doc-skill-name">team-user-and-scenario-analysis</span>
-      <span class="doc-cat-tag">research</span>
-    </div>
-    <div class="doc-creator">创建人：吕应龙</div>
-    <div class="doc-list">
-<a class="doc-item" href="javascript:void(0)" onclick="openLink('https://alidocs.dingtalk.com/i/nodes/NZQYprEoWoebG613tDgaymZmJ1waOeDk')"><span class="doc-icon">&#128196;</span><span class="doc-title">[研究]iDock 智能桌面机器人 · 人群与场景分析报告_v1.0</span><span class="doc-item-arrow">↗</span></a>
-    </div>
-  </div>
-</div>
-
-<div class="section-title">完整 Skill 清单</div>
-<div class="table-wrap">
-<table id="skillTable"><thead><tr><th>Skill 名称</th><th>分类</th><th>创建人</th><th>最新版本</th><th>调用量 &#8595;</th><th>均分</th><th>文档数</th><th>最近更新</th></tr></thead><tbody>
-  <tr>
-    <td><strong>team-competitor-analysis</strong></td>
-    <td><span class="tag">research</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.1.3</span></td>
-    <td><span class="calls-num">5</span></td>
-    <td><span class="score-val">4.2</span></td>
-    <td><span class="doc-count-num">1</span></td>
-    <td style="font-size:12px;color:var(--sub)">2026-05-07</td>
-  </tr>
-  <tr>
-    <td><strong>team-market-analysis-report</strong></td>
-    <td><span class="tag">research</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.2.0</span></td>
-    <td><span class="calls-num">2</span></td>
-    <td><span class="score-val">4.5</span></td>
-    <td><span class="doc-count-num">1</span></td>
-    <td style="font-size:12px;color:var(--sub)">2026-04-28</td>
-  </tr>
-  <tr>
-    <td><strong>team-wiki-decision-flow</strong></td>
-    <td><span class="tag">project</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.3.0</span></td>
-    <td><span class="calls-num">1</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)">2026-04-27</td>
-  </tr>
-  <tr>
-    <td><strong>team-user-and-scenario-analysis</strong></td>
-    <td><span class="tag">research</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.1.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="score-val">5.0</span></td>
-    <td><span class="doc-count-num">1</span></td>
-    <td style="font-size:12px;color:var(--sub)">2026-04-22</td>
-  </tr>
-  <tr>
-    <td><strong>team-project-retrospective</strong></td>
-    <td><span class="tag">project</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.0.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)"><span class="na">—</span></td>
-  </tr>
-  <tr>
-    <td><strong>team-3c-ecom-detail-generator</strong></td>
-    <td><span class="tag">design</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.0.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)">2026-04-28</td>
-  </tr>
-  <tr>
-    <td><strong>team-feature-prioritization</strong></td>
-    <td><span class="tag">product</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.0.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)"><span class="na">—</span></td>
-  </tr>
-  <tr>
-    <td><strong>team-report-summary-writer</strong></td>
-    <td><span class="tag">project</span></td>
-    <td>丛泽龙</td>
-    <td><span class="ver-badge">v1.0.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)"><span class="na">—</span></td>
-  </tr>
-  <tr>
-    <td><strong>team-requirement-clarification</strong></td>
-    <td><span class="tag">product</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.0.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)"><span class="na">—</span></td>
-  </tr>
-  <tr>
-    <td><strong>team-interaction-flow-design</strong></td>
-    <td><span class="tag">design</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.0.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)"><span class="na">—</span></td>
-  </tr>
-  <tr>
-    <td><strong>team-charging-protocol-spec</strong></td>
-    <td><span class="tag">compliance</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.0.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)">2026-04-27</td>
-  </tr>
-  <tr>
-    <td><strong>team-prd-generation</strong></td>
-    <td><span class="tag">product</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.0.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)"><span class="na">—</span></td>
-  </tr>
-  <tr>
-    <td><strong>team-demo-script-design</strong></td>
-    <td><span class="tag">design</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.0.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)"><span class="na">—</span></td>
-  </tr>
-  <tr>
-    <td><strong>team-action-item-tracking</strong></td>
-    <td><span class="tag">project</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.0.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)"><span class="na">—</span></td>
-  </tr>
-  <tr>
-    <td><strong>team-prototype-test-checklist</strong></td>
-    <td><span class="tag">hardware</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.0.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)">2026-04-27</td>
-  </tr>
-  <tr>
-    <td><strong>external-ocr-and-documents</strong></td>
-    <td><span class="tag">other</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.1.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)"><span class="na">—</span></td>
-  </tr>
-  <tr>
-    <td><strong>team-solution-proposal</strong></td>
-    <td><span class="tag">business</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.0.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)"><span class="na">—</span></td>
-  </tr>
-  <tr>
-    <td><strong>team-certification-requirement</strong></td>
-    <td><span class="tag">compliance</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.0.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)">2026-04-27</td>
-  </tr>
-  <tr>
-    <td><strong>pinseng-detail-image-generator</strong></td>
-    <td><span class="tag">design</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.4.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)">2026-05-06</td>
-  </tr>
-  <tr>
-    <td><strong>external-popular-web-designs</strong></td>
-    <td><span class="tag">other</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.1.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)"><span class="na">—</span></td>
-  </tr>
-  <tr>
-    <td><strong>dingtalk-workspace</strong></td>
-    <td><span class="tag">project</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.0.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)">2026-04-28</td>
-  </tr>
-  <tr>
-    <td><strong>external-local-product-microsite-from-materials</strong></td>
-    <td><span class="tag">other</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.1.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)"><span class="na">—</span></td>
-  </tr>
-  <tr>
-    <td><strong>team-dingtalk-task-sync</strong></td>
-    <td><span class="tag">project</span></td>
-    <td>丛泽龙</td>
-    <td><span class="ver-badge">v1.0.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)"><span class="na">—</span></td>
-  </tr>
-  <tr>
-    <td><strong>external-weather-query</strong></td>
-    <td><span class="tag">other</span></td>
-    <td>丛泽龙</td>
-    <td><span class="ver-badge">v1.0.1</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)"><span class="na">—</span></td>
-  </tr>
-  <tr>
-    <td><strong>team-partnership-follow-up</strong></td>
-    <td><span class="tag">business</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.0.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)"><span class="na">—</span></td>
-  </tr>
-  <tr>
-    <td><strong>team-detail-image-layout</strong></td>
-    <td><span class="tag">design</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.0.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)">2026-04-30</td>
-  </tr>
-  <tr>
-    <td><strong>team-meeting-minutes</strong></td>
-    <td><span class="tag">project</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.0.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)"><span class="na">—</span></td>
-  </tr>
-  <tr>
-    <td><strong>team-weekly-summary</strong></td>
-    <td><span class="tag">project</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.0.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)"><span class="na">—</span></td>
-  </tr>
-  <tr>
-    <td><strong>team-weekly-report-generator</strong></td>
-    <td><span class="tag">project</span></td>
-    <td>丛泽龙</td>
-    <td><span class="ver-badge">v1.1.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)">2026-04-24</td>
-  </tr>
-  <tr>
-    <td><strong>team-dingtalk-wiki-controller</strong></td>
-    <td><span class="tag">project</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.1.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)">2026-04-30</td>
-  </tr>
-  <tr>
-    <td><strong>team-data-security-review</strong></td>
-    <td><span class="tag">compliance</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.0.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)">2026-04-27</td>
-  </tr>
-  <tr>
-    <td><strong>team-weather-query</strong></td>
-    <td><span class="tag">other</span></td>
-    <td>丛泽龙</td>
-    <td><span class="ver-badge">v1.0.1</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)"><span class="na">—</span></td>
-  </tr>
-  <tr>
-    <td><strong>team-prototype-planning</strong></td>
-    <td><span class="tag">design</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.0.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)"><span class="na">—</span></td>
-  </tr>
-  <tr>
-    <td><strong>team-visual-asset-management</strong></td>
-    <td><span class="tag">design</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.0.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)">2026-04-27</td>
-  </tr>
-  <tr>
-    <td><strong>team-design-specification-structuring</strong></td>
-    <td><span class="tag">design</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.0.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)"><span class="na">—</span></td>
-  </tr>
-  <tr>
-    <td><strong>team-bd-requirement-to-solution</strong></td>
-    <td><span class="tag">business</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.0.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)"><span class="na">—</span></td>
-  </tr>
-  <tr>
-    <td><strong>team-privacy-compliance-check</strong></td>
-    <td><span class="tag">compliance</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.0.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)">2026-04-27</td>
-  </tr>
-  <tr>
-    <td><strong>team-wiki-controller</strong></td>
-    <td><span class="tag">project</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.0.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)">2026-04-24</td>
-  </tr>
-  <tr>
-    <td><strong>team-company-research</strong></td>
-    <td><span class="tag">research</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.0.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)"><span class="na">—</span></td>
-  </tr>
-  <tr>
-    <td><strong>team-information-architecture-design</strong></td>
-    <td><span class="tag">product</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.0.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)"><span class="na">—</span></td>
-  </tr>
-  <tr>
-    <td><strong>team-hardware-structure-review</strong></td>
-    <td><span class="tag">hardware</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.0.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)">2026-04-27</td>
-  </tr>
-  <tr>
-    <td><strong>team-business-opportunity-assessment</strong></td>
-    <td><span class="tag">business</span></td>
-    <td>吕应龙</td>
-    <td><span class="ver-badge">v1.0.0</span></td>
-    <td><span class="na">0</span></td>
-    <td><span class="na">—</span></td>
-    <td><span class="na">0</span></td>
-    <td style="font-size:12px;color:var(--sub)"><span class="na">—</span></td>
-  </tr>
-</tbody></table>
-</div>
-
-</div><!-- /page -->
 <script>
-// 统一用 window.open 跳转，兼容 file:// 协议（浏览器会拦截 target=_blank）
-function openLink(url) { if(url) window.open(url, '_blank'); }
-
-// Change Log 数据
-const CL_DATA = {"team-competitor-analysis": [{"version": "v1.1.3", "change": "新增关键竞品持续监控机制：Workflow 第9步、Output 第8项、Recommended Sections 第8项均要求每次报告必须输出高威胁竞品近期动态并对照分级预警条件响应；Pitfalls 新增「不要把竞品分析做成一次性快照」", "calls": "调用量: 4", "score": "评分: 4.2", "owner": "责任人: 吕应龙", "date": "改动时间: 2026-05-07"}, {"version": "v1.1.2", "change": "新增 Pitfalls：钉钉文档不支持 blockquote 内嵌多行列表，文档溯源块须用普通加粗段落格式", "calls": "调用量: 3", "score": "评分: 4.3", "owner": "责任人: 吕应龙", "date": "改动时间: 2026-05-06"}, {"version": "v1.1.1", "change": "新增「结论先行」为 Output 与 Recommended Sections 的必须首项，确保决策者快速获取全局洞察", "calls": "调用量: 2", "score": "评分: 4.5", "owner": "责任人: 吕应龙", "date": "改动时间: 2026-04-24"}], "team-market-analysis-report": [{"version": "v1.2.0", "change": "新增 Pre-step（调用 team-dingtalk-wiki-controller 按标签读取钉钉知识库上下文）和 Post-step（溯源 Header 注入 → 重复检测 → 归档写入钉钉知识库），Workflow 步骤编号相应调整；Pitfalls 新增 Pre/Post-step 不可跳过约束；Quality Checks 新增 Post-step 执行检查项", "calls": "调用量: 2", "score": "评分: 4.5", "owner": "责任人: 吕应龙", "date": "改动时间: 2026-04-28"}, {"version": "v1.1.7", "change": "新增满意度确认流程（报告交付后必须先询问用户是否满意，确认满意后方可触发任务回顾卡）；Pitfalls 新增禁止直接弹出任务回顾卡的约束", "calls": "调用量: 2", "score": "评分: 4.5", "owner": "责任人: 吕应龙", "date": "改动时间: 2026-04-24"}, {"version": "v1.1.6", "change": "新增信息来源角标规范（双向可跳转）", "calls": "调用量: 2", "score": "评分: 4.5", "owner": "责任人: 吕应龙", "date": "改动时间: 2026-04-24"}, {"version": "v1.1.5", "change": "新增 PDF 导出模块说明。，改动时间：", "calls": "调用量: 0", "score": "评分: 0.0", "owner": "责任人: AI产品中心-吕应龙", "date": "改动时间: 2026-04-23"}, {"version": "v1.1.4", "change": "新增\"报告精简偏好\"配置。，改动时间：-", "calls": "调用量: 0", "score": "评分: 0.0", "owner": "责任人: AI产品中心-丛泽龙", "date": "改动时间:"}, {"version": "v1.1.3", "change": "新增中文内部汇报默认使用\"主要结论\"标题等规则。，改动时间：-", "calls": "调用量: 0", "score": "评分: 0.0", "owner": "责任人: AI产品中心-吕应龙", "date": "改动时间:"}, {"version": "v1.1.2", "change": "补充来源校验、价格口径校验等。，改动时间：-", "calls": "调用量: 0", "score": "评分: 0.0", "owner": "责任人: AI产品中心-吕应龙", "date": "改动时间:"}, {"version": "v1.1.1", "change": "新增中国市场硬件类价格检查项。，改动时间：-", "calls": "调用量: 0", "score": "评分: 0.0", "owner": "责任人: AI产品中心-吕应龙", "date": "改动时间:"}, {"version": "v1.1.0", "change": "增强中国市场优先规则等。，改动时间：-", "calls": "调用量: 0", "score": "评分: 0.0", "owner": "责任人: AI产品中心-吕应龙", "date": "改动时间:"}, {"version": "v1.0.0", "change": "初始版本。，改动时间：-", "calls": "调用量: 0", "score": "评分: 0.0", "owner": "责任人: AI产品中心-吕应龙", "date": "改动时间:"}], "team-wiki-decision-flow": [{"version": "v1.3.0", "change": "", "calls": "新增触发权限白名单（吕应龙完全授权/丛泽龙提交授权）；Step 4 改为按板块负责人分组推送钉钉卡片，每张卡片仅含该负责人负责板块的影响内容；丛泽龙提交的决策卡片标题增加提交人说明，确认权归吕应龙", "score": "", "owner": "评分: -", "date": ""}, {"version": "v1.2.0", "change": "", "calls": "重构四个场景：①场景A改名new_decision，新增钉钉交互卡片确认逻辑（按钮触发，非口头确认）；②场景B补充每日同步简报钉钉推送；③场景C明确按负责人分组推送；④新增场景D doc_query（双触发条件：查阅特定文档/查询自己负责的待办），含待办展示与Skill调用引导", "score": "", "owner": "评分: -", "date": ""}, {"version": "v1.1.0", "change": "", "calls": "补充场景B智能同步逻辑（冲击性/补充性改动判断）、场景C明确cron触发时机与注册机制", "score": "", "owner": "评分: -", "date": ""}, {"version": "v1.0.0", "change": "", "calls": "初始版本，定义决策穿透响应全流程（manual_change / daily_summary / todo_reminder 三场景）", "score": "", "owner": "评分: -", "date": ""}], "team-user-and-scenario-analysis": [{"version": "v1.0.0", "change": "补全用户与场景分析的角色拆解、场景框架、输出结构与质量检查", "calls": "调用量: 0", "score": "评分: 0.0", "owner": "责任人: AI产品中心-吕应龙", "date": "改动时间: 2026-04-22"}, {"version": "v1.1.0", "change": "增加报告交付质量标准，要求正文核心论点必须包含 [N] 格式的权威数据角标", "calls": "调用量: 0", "score": "评分: 0.0", "owner": "责任人: AI产品中心-吕应龙", "date": "改动时间: 2026-04-22"}, {"version": "v1.1.1", "change": "调用生成 iDock 智能桌面机器人人群与场景分析报告", "calls": "调用量: 2", "score": "评分: 4.5", "owner": "责任人: AI产品中心-吕应龙", "date": "改动时间: 2026-05-06"}], "team-project-retrospective": [{"version": "v1.0.0", "change": "补全项目复盘的分析结构、原因追溯、改进行动设计与质量检查", "calls": "调用量: 0", "score": "评分: 0.0", "owner": "责任人: AI产品中心-吕应龙", "date": "改动时间:"}], "team-3c-ecom-detail-generator": [{"version": "v1.0.0", "change": "初始化，基于TP-C134产品需求创建3C电子产品详情页生成skill", "calls": "调用量: 0", "score": "评分: 0.0", "owner": "责任人: 吕应龙", "date": "改动时间: 2026-04-28"}]};
-
-function toggleCL(btn) {
-  const panel = document.getElementById('clPanel');
-  const name  = btn.dataset.skill;
-  if (panel.classList.contains('open') && document.getElementById('clPanelName').textContent === name) {
-    closeCL(); return;
-  }
-  document.getElementById('clPanelName').textContent = name;
-  const entries = CL_DATA[name] || [];
-  let body = '';
-  if (!entries.length) {
-    body = '<p class="cl-empty">暂无 Change Log 记录</p>';
-  } else {
-    body = '<table class="cl-table"><thead><tr><th>版本</th><th>改动内容</th><th>调用量</th><th>评分</th><th>责任人</th><th>时间</th></tr></thead><tbody>';
-    entries.forEach(e => {
-      body += `<tr><td class="cl-ver">${e.version}</td><td class="cl-change">${e.change}</td><td class="cl-calls">${e.calls}</td><td class="cl-score">${e.score}</td><td class="cl-owner">${e.owner}</td><td class="cl-date">${e.date}</td></tr>`;
-    });
-    body += '</tbody></table>';
-  }
-  document.getElementById('clPanelBody').innerHTML = body;
-  // 把面板移到被点击按钮所在行的下方（rank-inner 内）
-  const rankInner = document.querySelector('.rank-inner');
-  rankInner.after(panel);
-  panel.classList.add('open');
-  panel.scrollIntoView({behavior:'smooth', block:'nearest'});
-}
-
-function closeCL() {
-  document.getElementById('clPanel').classList.remove('open');
-}
-
-// Change Log 面板 — 文档数 TOP5 专属（展示在该卡片下方）
-function toggleCLDocs(btn) {
-  const panel = document.getElementById('clPanelDocs');
-  const skill = btn.dataset.skill;
-  if (panel.classList.contains('open') && document.getElementById('clPanelDocsName').textContent === skill) {
-    closeCLDocs(); return;
-  }
-  const entries = CL_DATA[skill] || [];
-  document.getElementById('clPanelDocsName').textContent = skill;
-  let body = '';
-  if (!entries.length) {
-    body = '<p class="cl-empty">暂无 Change Log 记录</p>';
-  } else {
-    body = '<table class="cl-table"><thead><tr><th>版本</th><th>改动</th><th>调用量</th><th>评分</th><th>责任人</th><th>时间</th></tr></thead><tbody>';
-    entries.forEach(e => {
-      body += `<tr><td class="cl-ver">${e.version}</td><td class="cl-change">${e.change}</td><td class="cl-calls">${e.calls}</td><td class="cl-score">${e.score}</td><td class="cl-owner">${e.owner}</td><td class="cl-date">${e.date}</td></tr>`;
-    });
-    body += '</tbody></table>';
-  }
-  document.getElementById('clPanelDocsBody').innerHTML = body;
-  // 把面板移到文档数TOP5卡片（rank-card）内部末尾
-  const docsCard = document.getElementById('clPanelDocs').closest('.rank-card') ||
-                   btn.closest('.rank-card');
-  if (docsCard) docsCard.appendChild(panel);
-  panel.classList.add('open');
-  panel.scrollIntoView({behavior:'smooth', block:'nearest'});
-}
-
-function closeCLDocs() {
-  document.getElementById('clPanelDocs').classList.remove('open');
-}
-
-// 完整清单排序
-const table = document.getElementById('skillTable');
-const headers = table.querySelectorAll('thead th');
-let sortCol = 4, sortAsc = false;
-headers.forEach((th, i) => {
-  th.addEventListener('click', () => {
-    if(sortCol === i) sortAsc = !sortAsc;
-    else { sortCol = i; sortAsc = false; }
-    sortTable(i, sortAsc);
-    headers.forEach(h => h.style.color = '');
-    th.style.color = 'var(--blue)';
-  });
+const catCtx = document.getElementById('catChart').getContext('2d');
+new Chart(catCtx, {
+  type: 'doughnut',
+  data: { labels: ["External / Content", "External / Tools", "External / Utility", "00 \u00b7 Project", "000 \u00b7 Others", "01 \u00b7 Research", "02 \u00b7 Hardware", "03 \u00b7 Software & AI", "04 \u00b7 UX & Visual", "05 \u00b7 Compliance"], datasets: [{ data: [2, 1, 1, 9, 1, 4, 5, 4, 5, 4], backgroundColor: ["#58a6ff", "#3fb950", "#f78166", "#d2a8ff", "#ffa657", "#79c0ff", "#56d364", "#ff7b72", "#e3b341", "#a5d6ff"], borderWidth: 0 }] },
+  options: { plugins: { legend: { position: 'right', labels: { color: '#8b949e', font: { size: 11 } } } }, cutout: '60%' }
 });
-function sortTable(col, asc) {
-  const tbody = table.querySelector('tbody');
-  const rows  = Array.from(tbody.rows);
-  rows.sort((a, b) => {
-    const av = a.cells[col].innerText.replace(/[^\d.]/g,'') || '0';
-    const bv = b.cells[col].innerText.replace(/[^\d.]/g,'') || '0';
-    const an = parseFloat(av), bn = parseFloat(bv);
-    if(!isNaN(an) && !isNaN(bn)) return asc ? an-bn : bn-an;
-    return asc ? av.localeCompare(bv,'zh') : bv.localeCompare(av,'zh');
-  });
-  rows.forEach(r => tbody.appendChild(r));
-}
 
-// 多文档浮层
-const popup = document.createElement('div');
-popup.className = 'doc-popup';
-popup.innerHTML = '<button class="doc-popup-close" onclick="closeDocPopup()">✕</button><div class="doc-popup-title">产出文档</div><div id="docPopupList"></div>';
-document.body.appendChild(popup);
-
-function openDocPopup(btn) {
-  const docs = JSON.parse(btn.dataset.docs);
-  const list = document.getElementById('docPopupList');
-  list.innerHTML = docs.map(d =>
-    d.l ? `<a class="doc-popup-item" href="javascript:void(0)" onclick="openLink('${d.l}')">&#128196; ${d.t} <span style="margin-left:auto;font-size:11px;color:var(--blue)">↗</span></a>`
-         : `<div class="doc-popup-item">&#128196; ${d.t}</div>`
-  ).join('');
-  const rect = btn.getBoundingClientRect();
-  popup.style.top  = (rect.bottom + window.scrollY + 8) + 'px';
-  popup.style.left = Math.min(rect.left + window.scrollX, window.innerWidth - 420) + 'px';
-  popup.classList.add('open');
-}
-function closeDocPopup() { popup.classList.remove('open'); }
-document.addEventListener('click', e => {
-  if (!popup.contains(e.target) && !e.target.classList.contains('doc-count-btn')) closeDocPopup();
+const commitCtx = document.getElementById('commitChart').getContext('2d');
+new Chart(commitCtx, {
+  type: 'bar',
+  data: {
+    labels: ["03-30", "03-31", "04-01", "04-02", "04-03", "04-04", "04-05", "04-06", "04-07", "04-08", "04-09", "04-10", "04-11", "04-12", "04-13", "04-14", "04-15", "04-16", "04-17", "04-18", "04-19", "04-20", "04-21", "04-22", "04-23", "04-24", "04-25", "04-26", "04-27", "04-28"],
+    datasets: [{ label: 'Commits', data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 86, 1], backgroundColor: 'rgba(88,166,255,0.7)', borderRadius: 3 }]
+  },
+  options: {
+    scales: {
+      x: { ticks: { color: '#8b949e', maxRotation: 45, font: { size: 10 } }, grid: { color: '#21262d' } },
+      y: { ticks: { color: '#8b949e' }, grid: { color: '#21262d' }, beginAtZero: true }
+    },
+    plugins: { legend: { display: false } }
+  }
 });
-document.querySelectorAll('.doc-count-btn').forEach(btn => {
-  btn.addEventListener('click', e => { e.stopPropagation(); openDocPopup(btn); });
+
+const topCtx = document.getElementById('topChart').getContext('2d');
+new Chart(topCtx, {
+  type: 'bar',
+  data: {
+    labels: ["competitor-analysis", "market-analysis-report", "wiki-decision-flow", "local-product-microsite-from", "popular-web-designs", "weather-query", "ocr-and-documents", "action-item-tracking", "dingtalk-task-sync", "meeting-minutes"],
+    datasets: [{ label: '调用量', data: [2, 2, 1, 0, 0, 0, 0, 0, 0, 0], backgroundColor: 'rgba(63,185,80,0.7)', borderRadius: 3 }]
+  },
+  options: {
+    indexAxis: 'y',
+    scales: {
+      x: { ticks: { color: '#8b949e' }, grid: { color: '#21262d' }, beginAtZero: true },
+      y: { ticks: { color: '#8b949e', font: { size: 11 } }, grid: { color: '#21262d' } }
+    },
+    plugins: { legend: { display: false } }
+  }
+});
+
+const verCtx = document.getElementById('verChart').getContext('2d');
+new Chart(verCtx, {
+  type: 'pie',
+  data: {
+    labels: ["v1"],
+    datasets: [{ data: [36], backgroundColor: ['#58a6ff','#3fb950','#ffa657','#d2a8ff','#f78166'], borderWidth: 0 }]
+  },
+  options: { plugins: { legend: { position: 'right', labels: { color: '#8b949e', font: { size: 12 } } } } }
 });
 </script>
-</body></html>
+</body>
+</html>
